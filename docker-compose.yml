@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    env_file:
+      - .env
+    volumes:
+      - ./backend/:/app/
+    ports:
+      - 8001:8000
+    depends_on:
+      - arango_db
+  
+  arango_db:
+    image: arangodb:3.9
+    volumes:
+      - arango:/var/lib/arangodb/data/
+    env_file:
+      - .env
+    ports:
+      - 8530:8529
+
+volumes:
+  arango:
