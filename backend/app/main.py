@@ -1,8 +1,33 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from app.api.user import router as user_routes
+from app.auth.jwt_handler import Token, create_access_token
+from app.auth.pass_validation import authenticate_user
+from app.database.collection import user_collection
 
+from datetime import datetime, timedelta
 
 app = FastAPI()
 
+app.include_router(user_routes)
+
+
+@app.post("/token", response_model=Token, tags=['Auth'])
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(user_collection, form_data.username, form_data.password)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect Username or Password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=30)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/", tags=['test'])
 async def index():
