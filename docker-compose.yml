@@ -14,7 +14,7 @@ services:
       - arango_db
   
   arango_db:
-    image: arangodb:3.9
+    image: arangodb:latest
     volumes:
       - arango:/var/lib/arangodb/data/
     env_file:

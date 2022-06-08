@@ -1,5 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from app.api.user import router as user_routes
 from app.auth.jwt_handler import Token, create_access_token
 from app.auth.pass_validation import authenticate_user
@@ -24,7 +24,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user['username']}, expires_delta=access_token_expires
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
