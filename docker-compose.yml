@@ -5,11 +5,20 @@ services:
     build: ./backend
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     env_file:
-      - .env
+      - ./.env
+    environment:
+      - ARANGO_ROOT_PASSWORD=${ARANGO_ROOT_PASSWORD}
+      - ARANGO_PORT=8530
+      - ARANGO_URL=172.16.231.99
+      - ARANGO_USER=${ARANGO_USER}
     volumes:
       - ./backend/:/app/
+    networks:
+      backend:
+        ipv4_address: 172.16.231.100
     ports:
-      - 8001:8000
+      - 8000:8000
+    restart: on-failure
     depends_on:
       - arango_db
   
@@ -19,8 +28,30 @@ services:
       - arango:/var/lib/arangodb/data/
     env_file:
       - .env
+    environment:
+      - ARANGO_ROOT_PASSWORD=${ARANGO_ROOT_PASSWORD}
     ports:
-      - 8530:8529
+      - 8530:8530
+    command:
+      - arangod
+      - --server.endpoint=http+tcp://0.0.0.0:8530
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://172.16.231.99:8530"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      backend:
+        ipv4_address: 172.16.231.99
+
+networks:
+  backend:
+    name: project_hub_backend_network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.231.0/24
+          gateway: 172.16.231.1
 
 volumes:
   arango:
