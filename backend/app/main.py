@@ -4,10 +4,19 @@ from app.api.user import router as user_routes
 from app.auth.jwt_handler import Token, create_access_token
 from app.auth.pass_validation import authenticate_user
 from app.database.collection import user_collection
+from fastapi.middleware.cors import CORSMiddleware
 
 from datetime import datetime, timedelta
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://172.16.231.98:8080"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user_routes)
 

@@ -26,6 +26,6 @@ def make_connection(url=url, username=arango_user, password=arango_pass):
     except ConnectionError as e:
         logging.error("ArangoDB connection cannot be established.")
         logging.error(f"{e}")
-        raise ConnectionError(e)
+        raise ConnectionError(f"User: {username}, PASS: {password}, {e}")
 
     return conn
