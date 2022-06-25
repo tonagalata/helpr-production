@@ -62,7 +62,7 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
 
 # TODO remove project members
 
-# TODO delete project
+
 @router.delete("/delete/{project_key}", tags=['Project'])
 async def delete_project(project_key: str):
     try:
