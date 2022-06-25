@@ -56,9 +56,9 @@ class Project(Collection):
         "github_repo": Field(),
         "description": Field(),
         "short_desc": Field(),
-        "stars": Field(),
-        "funds": Field(),
-        "date_created": Field()
+        "stars": Field(default=0),
+        "funds": Field(default=0),
+        "utc_date_created": Field()
     }
 
 

@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from app.api.user import router as user_routes
+from app.api.project import router as project_routes
 from app.auth.jwt_handler import Token, create_access_token
 from app.auth.pass_validation import authenticate_user
 from app.database.collection import user_collection
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(user_routes)
+app.include_router(project_routes)
 
 
 @app.post("/token", response_model=Token, tags=['Auth'])

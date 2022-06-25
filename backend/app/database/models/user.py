@@ -8,6 +8,7 @@ class User(BaseModel):
     username: str = Field(default=None)
     email: EmailStr = Field(default=None)
     disabled: bool = Field(default=False)
+    image_path: Optional[str] = Field(default=None)
 
 
 class UserLogin(BaseModel):
@@ -20,3 +21,4 @@ class UserUpdate(User):
     last_name: Optional[str]
     email: Optional[EmailStr]
     password: Optional[str]
+

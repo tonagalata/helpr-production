@@ -5,10 +5,11 @@ import datetime
 
 class Project(BaseModel):
     project_name: str
-    github_repo: Optional[str]
-    description: str
-    short_desc: str
-    date_created: datetime.datetime
+    github_repo: str
+    description: Optional[str]
+    short_desc: Optional[str]
+    utc_date_created: datetime.datetime = datetime.datetime.utcnow()
+    icon_path: str = Field(default=None)
 
 
 class ProjectUpdate(Project):
