@@ -10,11 +10,13 @@ def verify_password(plain_password, hashed_password):
 def hash_password(plain_password):
     return pwd_context.hash(plain_password)
 
-def get_user(coll, username: str):
-    query = coll.fetchByExample({'username': username}, batchSize=20, count=True)
+def get_user(coll, username: str, doc_return: bool=False):
+    query = coll.find({'username': username})
 
-    if query.count > 0:
-        return query[0].getStore()
+    if query.count() > 0:
+        if doc_return:
+            return query.next()
+        return query.next()
     
     return None
 

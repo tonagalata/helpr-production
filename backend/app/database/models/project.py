@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, Field
 import datetime
 
@@ -15,3 +15,9 @@ class Project(BaseModel):
 class ProjectUpdate(Project):
     stars: Optional[int]
     funds: Optional[float]
+
+class ProjectMember(BaseModel):
+    project_key: str
+    username: List[str]
+    role: Optional[str] = "Member"
+    

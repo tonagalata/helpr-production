@@ -2,20 +2,20 @@ import re
 
 # A collection of validation functions used through the app
 def check_unique(coll, data, field, results=False):
-    query = coll.fetchByExample({field: data}, batchSize=20, count=True)
+    query = coll.find({field: data})
 
-    if query.count == 0:
+    if query.count() == 0:
         return {"unique": True}
     
     if results:
-        return {"unique": False, "query_results": [x.getStore() for x in query]}
+        return {"unique": False, "query_results": [x for x in query]}
     
     return False
 
 def set_key_number(coll, key_value):
-    query = coll.fetchByExample({'_key': key_value}, batchSize=20, count=True)
+    query = coll.find({'_key': key_value})
 
-    if query.count == 0:
+    if query.count() == 0:
         return key_value
     
     key_search = re.search(r"\d+$", key_value)
