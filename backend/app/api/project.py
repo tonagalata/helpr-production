@@ -1,15 +1,13 @@
-from os import stat
 from fastapi import APIRouter, Depends, HTTPException, requests, Body, status
 from app.auth.jwt_handler import get_current_user
 from app.auth.pass_validation import get_user
 from app.core.validation import check_unique, set_key_number
 from app.database.models.project import Project, ProjectMember, ProjectUpdate
-from pyArango.theExceptions import DocumentNotFoundError
 
 from typing import Union, List
 
 from app.database.collection import (
-    hub_graph, memberOf_edge
+    hub_graph, memberOf_edge, db
 )
 
 project_collection = hub_graph.vertex_collection("project")
@@ -55,7 +53,28 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
     return {"post": doc, "project_key": doc['_key']}
 
 # TODO update project
+@router.put("/update/{project_key}", tags=['Project'])
+async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None)):
+    project = project_collection.get(project_key)
 
+    if project is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No project with key {project_key} exists."
+        )
+
+    project = body.dict()
+    pop_list = ['utc_date_created']
+    for key in project.keys():
+        if project[key] is None:
+            pop_list.append(key)
+
+    [project.pop(x, None) for x in pop_list]
+    project["_key"] = project_key
+
+    new_project = project_collection.update(project, keep_none=False, return_new=True)
+
+    return new_project
 
 # TODO assign project to cohort
 
@@ -104,13 +123,30 @@ async def add_project_members(body: ProjectMember, apiKey: dict=Depends(get_curr
         }
     }
 
-# TODO get project members
+
 @router.get("/members/{project_key}", tags=['Project'])
 async def get_all_members(project_key: str):
+    
+    results = db.aql.execute(f"""
+    FOR v, e IN 1..1 INBOUND 'project/{project_key}' memberOf
+    FILTER e.role == 'Member'
+    RETURN v
+    """)
 
-    return [x for x in memberOf_edge.get_many({"_to": project_key})]
+    return [x for x in results]
 
-# TODO remove project members
+
+@router.delete('/members/{project_key}/{username}', tags=['Project'])
+async def remove_member(project_key: str, username: str):
+    edge = memberOf_edge.get(f'{username}-{project_key}')
+    if edge is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No user-project relationship for {username}-{project_key}."
+        )
+    memberOf_edge.delete({"_key": f"{username}-{project_key}"})
+    
+    return {"relationship_removed": edge}
 
 
 @router.delete("/delete/{project_key}", tags=['Project'])
