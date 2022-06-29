@@ -15,7 +15,7 @@ class Project(BaseModel):
 class ProjectUpdate(Project):
     github_repo: Optional[str]
     utc_date_created: Optional[datetime.datetime]
-    stars: Optional[int]
+    hearts: Optional[int]
     funds: Optional[float]
 
 class ProjectMember(BaseModel):

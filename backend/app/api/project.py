@@ -47,7 +47,9 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
 
     doc['github_repo'] = project.github_repo.lower()
     doc['_key'] = set_key_number(project_collection, project.github_repo.split('/')[-1])
-    
+    doc['hearts'] = 0
+    doc['funds'] = 0
+
     project_collection.insert(doc)
 
     return {"post": doc, "project_key": doc['_key']}
