@@ -54,7 +54,7 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
 
 # TODO update project
 @router.put("/update/{project_key}", tags=['Project'])
-async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None)):
+async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None), apiKey: dict=Depends(get_current_user)):
     project = project_collection.get(project_key)
 
     if project is None:
@@ -137,7 +137,7 @@ async def get_all_members(project_key: str):
 
 
 @router.delete('/members/{project_key}/{username}', tags=['Project'])
-async def remove_member(project_key: str, username: str):
+async def remove_member(project_key: str, username: str, apiKey: dict=Depends(get_current_user)):
     edge = memberOf_edge.get(f'{username}-{project_key}')
     if edge is None:
         raise HTTPException(
@@ -150,7 +150,7 @@ async def remove_member(project_key: str, username: str):
 
 
 @router.delete("/delete/{project_key}", tags=['Project'])
-async def delete_project(project_key: str):
+async def delete_project(project_key: str, apiKey: dict=Depends(get_current_user)):
     
     doc = project_collection.get(project_key)
     if doc is None:
