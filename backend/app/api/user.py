@@ -8,14 +8,16 @@ from typing import Union
 from pydantic import EmailStr
 
 from app.database.collection import (
-    user_collection, cohort_collection, project_collection, db
+    hub_graph
 )
+
+user_collection = hub_graph.vertex_collection("user")
 
 router = APIRouter(prefix='/user')
 
 # Setting user print keys
 def parse_user_dict(user: dict, _key: bool=False) -> dict:
-    print_keys = ['username', 'first_name', 'last_name', 'email']
+    print_keys = ['username', 'first_name', 'last_name', 'email', 'image_path']
 
     if _key:
         print_keys.append('_key')
@@ -30,7 +32,7 @@ async def get_one_user(username: str):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with username {} exists.".format(username)
+            detail="User with username {} does not exist.".format(username)
         )
 
     return user
@@ -54,13 +56,14 @@ async def search_users(
     if email:
         search['email'] = email.lower().replace(" ", "")
 
-    results = user_collection.fetchByExample(search, batchSize=20, count=True)
-    if results.count == 0:
+    results = user_collection.find(search)
+    result_count = results.count()
+    if result_count == 0:
         all_users = []
     else:
-        all_users = [doc.getStore() for doc in results]
+        all_users = [doc for doc in results]
 
-    return {"user_count": results.count, "users": all_users}
+    return {"user_count": result_count, "users": all_users}
 
 # Create new user
 @router.post("/signup", tags=['User'])
@@ -78,28 +81,29 @@ async def user_signup(user: User = Body(default=None), password: str = None):
             detail="User with email {} exists.".format(user.email)
         )
 
-    doc = user_collection.createDocument()
+    doc = {}
     user_d = user.dict()
 
     doc['email'] = user_d['email'].lower().replace(" ", "")
     doc['first_name'] = user_d['first_name'].title()
     doc['last_name'] = user_d['last_name'].title()
     doc['username'] = user_d['username'].lower().replace(" ","")
+    
+    doc['image_path'] = user_d.get('image_path','')
+    doc['disabled'] = False
 
     doc['_key'] = user_d['username'].lower().replace(" ", "")
 
     doc['password'] = hash_password(password)
-    doc.save()
+    
+    user_collection.insert(doc)
 
-    return doc.getStore()
+    return doc
 
 @router.put("/update-password", tags=['User'])
 async def update_user(username: str, password: str, apiKey: dict=Depends(get_current_user)):
     
     user = get_user(user_collection, username)
-
-    # Getting only required user fields
-    user = parse_user_dict(user, _key=True)
 
     if not user:
         raise HTTPException(
@@ -109,10 +113,9 @@ async def update_user(username: str, password: str, apiKey: dict=Depends(get_cur
 
     new_password = hash_password(password)
 
-    doc = user_collection[user['_key']]
+    user['password'] = new_password
 
-    doc['password'] = new_password
-    doc.save()
+    user_collection.update(user)
 
     return {
         "status_code": status.HTTP_202_ACCEPTED,
@@ -130,9 +133,7 @@ async def user_delete(username: str):
             detail="User with username '{}' does not exists.".format(username)
         )
 
-    doc = user_collection[user['_key']]
-
-    doc.delete()
+    user_collection.delete(user['_key'])
 
     return {
         "status_code": status.HTTP_200_OK,
