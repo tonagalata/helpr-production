@@ -21,4 +21,5 @@ class UserUpdate(User):
     last_name: Optional[str]
     email: Optional[EmailStr]
     password: Optional[str]
+    disabled: Optional[bool] = Field(default=None)
 
