@@ -10,7 +10,7 @@ const Sidebar = (props) => {
             <div style={{ height: '3em' }}>
                <span style={{ margin: '0 2em' }} onClick={() => props.setSidebar(true)}><i className="fa fa-bars"></i></span>
                <div className={styles.logoContainer}>
-                    <Link href="/all-projects">ROCA</Link>
+                    <Link href="/all-projects">Project Hub</Link>
                </div>
                <span style={{ padding: '.5em .75em .5em .75em', backgroundColor: '#333', color: '#FFF', borderRadius: '100%', marginRight: '2em' }}><Link style={{ textDecoration: 'none', color: '#fff' }} href="/account">{props.user ? props.user.first_name.charAt(0) : <i className='fa fa-user'></i>}</Link></span>
             </div>

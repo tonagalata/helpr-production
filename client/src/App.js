@@ -29,6 +29,8 @@ function App() {
   const password = useRef("")
 
   const pagesList = ['home', 'all projects', 'Transactions', 'my projects', 'account']
+  
+
   const faIcons = ['fa fa-home', 'fa fa-project-diagram', 'fa fa-history', 'fa fa-check-square', 'fa fa-user']
 
   const projects = [
@@ -36,7 +38,7 @@ function App() {
       id: 1,
       name: 'Wine Project',
       short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui at massa luctus, eget tincidunt nisi consectetur",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ",
       users: ['Ben', 'Mike', 'Amber', 'Atwan'],
       created_date: 'July 24, 2022',
       image: wine_p,
@@ -95,33 +97,33 @@ function App() {
   ]
 
 
-//   useEffect(() => {
-//     if (getUsers === null){
-//       fetch("http://localhost:8000/user/search")
-//       .then(response => response.json())
-//       .then(data => setGetUsers(data.users[0]))
-//     }
-//   },[getUsers]);
+  useEffect(() => {
+    if (getUsers === null){
+      fetch("http://localhost:8000/user/search")
+      .then(response => response.json())
+      .then(data => setGetUsers(data.users[0]))
+    }
+  },[getUsers]);
 
 
 
-//   useEffect(() => {
-//     if (getUsers === null){
-//       fetch("http://localhost:8000/user/search")
-//       .then(response => response.json())
-//       .then(data => setGetUsers(data.users[0]))
-//     }
-//   },[getUsers]);
+  useEffect(() => {
+    if (getUsers === null){
+      fetch("http://localhost:8000/user/search")
+      .then(response => response.json())
+      .then(data => setGetUsers(data.users[0]))
+    }
+  },[getUsers]);
 
-//   useEffect(() => {
-//     if (getProjects === null){
-//       fetch("http://localhost:8000/project/all")
-//       .then(response => response.json())
-//       .then(data => console.log(data)
-//         // setGetProjects(data.users[0])
-//         )
-//     }
-//   },[getUsers]);
+  useEffect(() => {
+    if (getProjects === null){
+      fetch("http://localhost:8000/project/all")
+      .then(response => response.json())
+      .then(data => console.log(data)
+        // setGetProjects(data.users[0])
+        )
+    }
+  },[getUsers]);
 
   const handleSidebar = (e) => {
     setSidebar(false)
@@ -182,7 +184,7 @@ return (
 
       <Router>
           <Switch>
-            <div className='login'>
+            {/* <div className='login'>
               <Route path="/signin">
                 <SignInForm />
               </Route> 
@@ -196,13 +198,14 @@ return (
                   handleCreateUser={handleCreateUser}
                 />
               </Route>
-              </div>
-            {
-              getUsers ? 
+              </div> */}
+              {console.log(getUsers)}
             <div>
               <Sidebar
                   faIcons={faIcons} 
-                  pagesList={pagesList} 
+                  pagesList={
+                    getUsers ? pagesList : pagesList.filter(e => ['home', 'all projects'].includes(e))
+                  }
                   user={getUsers} 
                   handleSidebar={handleSidebar} 
                   sidebar={sidebar} 
@@ -213,6 +216,10 @@ return (
               <Route path="/all-projects">
                 <AllProjects projects={projects}/>
               </Route>
+              </div>
+                {
+                  getUsers ? 
+                <div>
               <Route path="/my-projects">
                 <MyProjects/>
               </Route>
