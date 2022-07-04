@@ -16,223 +16,131 @@ import movie_p from './images/movie_project.jpeg'
 import covid_p from './images/covid_project.jpeg'
 import SignUpForm from './components/Signup/SignupForm';
 import SignInForm from './components/Signin/SigninForm';
+import useToken from './components/useToken';
+import useUser from './components/useUser';
+import CreateProject from './components/CreateProject/CreateProject';
 
   
 function App() {
-  const [sidebar, setSidebar] = useState(false)
-  const [getUsers, setGetUsers] = useState(null)
-  const [getProjects, setGetProjects] = useState(null)
-  const firstName = useRef("")
-  const lastName = useRef("")
-  const email = useRef("")
-  const userName = useRef("")
-  const password = useRef("")
 
-  const pagesList = ['home', 'all projects', 'Transactions', 'my projects', 'account']
+  const { token, setToken } = useToken();
+  const { user, setUser } = useUser();
+
+
+  const [sidebar, setSidebar] = useState(false)
+  const [pathName, setPathName] = useState()
+  const [currentUser, setCurrentUser] = useState(null)
+  const [projects, setProjects] = useState(null)
+
+  const pagesList = ['all projects', 'transactions', 'my projects', 'create project', 'account']
   
 
-  const faIcons = ['fa fa-home', 'fa fa-project-diagram', 'fa fa-history', 'fa fa-check-square', 'fa fa-user']
-
-  const projects = [
-    {
-      id: 1,
-      name: 'Wine Project',
-      short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ",
-      users: ['Ben', 'Mike', 'Amber', 'Atwan'],
-      created_date: 'July 24, 2022',
-      image: wine_p,
-      money: 100000
-    },
-    {
-      id: 2,
-      name: 'Beer Project',
-      short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui at massa luctus, eget tincidunt nisi consectetur",
-      users: ['Ben', 'Mike', 'Amber', 'Atwan'],
-      created_date: 'July 7, 2022',
-      image: beer_p,
-      money: 100000
-    },
-    {
-      id: 3,
-      name: 'Tornado Project',
-      short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui at massa luctus, eget tincidunt nisi consectetur",
-      users: ['Ben', 'Mike', 'Amber', 'Atwan'],
-      created_date: 'July 10, 2022',
-      image: tornado_p,
-      money: 100000
-    },
-    {
-      id: 4,
-      name: 'Crime Project',
-      short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui at massa luctus, eget tincidunt nisi consectetur",
-      users: ['Ben', 'Mike', 'Amber', 'Atwan'],
-      created_date: 'July 14, 2022',
-      image: crime_p,
-      money: 100000
-    },
-    {
-      id: 5,
-      name: 'Movie Project',
-      short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui at massa luctus, eget tincidunt nisi consectetur",
-      users: ['Ben', 'Mike', 'Amber', 'Atwan'],
-      created_date: 'July 12, 2022',
-      image: movie_p,
-      money: 100000
-    },
-    {
-      id: 6,
-      name: 'Covid Project',
-      short_desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis dui at massa luctus, eget tincidunt nisi consectetur",
-      users: ['Ben', 'Mike', 'Amber', 'Atwan'],
-      created_date: 'July 26, 2022',
-      image: covid_p,
-      money: 90000
-    },
-  ]
-
+  const faIcons = ['fa fa-project-diagram', 'fa fa-history', 'fa fa-check-square', 'fa fa-plus', 'fa fa-user']
 
   useEffect(() => {
-    if (getUsers === null){
-      fetch("http://localhost:8000/user/search")
-      .then(response => response.json())
-      .then(data => setGetUsers(data.users[0]))
+    if (pathName){
+      setPathName(['/signin', '/signup'].includes(window.location.pathname))
+      window.location.reload();
     }
-  },[getUsers]);
-
-
+  },[pathName]);
 
   useEffect(() => {
-    if (getUsers === null){
-      fetch("http://localhost:8000/user/search")
+    if (user){
+      fetch(`http://localhost:8000/user/${user}/info`)
       .then(response => response.json())
-      .then(data => setGetUsers(data.users[0]))
+      // .then(data => console.log(data.username))
+      .then(data => setCurrentUser(data.username))
     }
-  },[getUsers]);
+  },[user]);
+
 
   useEffect(() => {
-    if (getProjects === null){
+    if (projects === null){
       fetch("http://localhost:8000/project/all")
       .then(response => response.json())
-      .then(data => console.log(data)
-        // setGetProjects(data.users[0])
-        )
+      .then(data => setProjects(data))
     }
-  },[getUsers]);
+  },[projects]);
 
   const handleSidebar = (e) => {
     setSidebar(false)
 };
 
 
-const handleCreateUser = (e) => {
-  // "disabled": false,
-  // "image_path": "string"
-  e.preventDefault()
-  const firstNameVal = firstName.current.value
-  const lastNameVal = lastName.current.value
-  const userNameVal = userName.current.value
-  const emailVal = email.current.value
-  const passwordVal = password.current.value
-  const disableVal = false
-  const imagePath = ""
+if(!token) {
   
-  const createUser = {
-    "first_name": firstNameVal,
-    "last_name": lastNameVal,
-    "username": userNameVal,
-    "email": emailVal,
-    "disabled": disableVal,
-    "image_path": imagePath,
-  }
-  console.log(e, createUser)
+  return (
+    <div>
 
-  const requestOptions = {
-    method: 'POST',
-    body: JSON.stringify(createUser)
-};
+          <Router>
+            {
+            !['/all-projects', '/signin', '/signup'].includes(window.location.pathname) ?
+              <Redirect from="*" to="/signin" />
+              : ""
+            }
+            {
+              <Route 
+                    path="/all-projects">
+                  <Sidebar
+                    faIcons={faIcons} 
+                    pagesList={['all-projects']}
+                    user={currentUser} 
+                    handleSidebar={handleSidebar} 
+                    sidebar={sidebar} 
+                    setSidebar={setSidebar} 
+                  /> 
+                    <AllProjects 
+                      projects={projects}
+                    />
+              </Route>
+            }
 
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const url = `http://localhost:8000/user/signup?password=${passwordVal}`
-
-
-    if (getUsers === null){
-      fetch(url, {
-        method: 'POST',
-        headers: {          
-          'Accept': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-          'Access-Control-Request-Method': 'GET, POST, DELETE, PUT, OPTIONS',
-          'Content-Type':'application/json'
-        },
-        body: JSON.stringify(createUser)
-      }).then(res => console.log(res))
-
-    }
-
-};
+            <Route path="/signin">
+            <SignInForm
+              setToken={setToken}
+              setUser={setUser}
+              />
+          </Route> 
+          <Route path="/signup">
+            <SignUpForm />
+          </Route>
+        </Router>
+    </div>
+  )}
 
 
 return (
     <div className="App">
-
       <Router>
           <Switch>
-            {/* <div className='login'>
-              <Route path="/signin">
-                <SignInForm />
-              </Route> 
-              <Route path="/signup">
-                <SignUpForm 
-                  firstName={firstName}
-                  lastName={lastName}
-                  email={email}
-                  userName={userName}
-                  password={password}
-                  handleCreateUser={handleCreateUser}
-                />
-              </Route>
-              </div> */}
-              {console.log(getUsers)}
+            
             <div>
+              <Redirect from="/signup" to="all-projects" />
               <Sidebar
                   faIcons={faIcons} 
-                  pagesList={
-                    getUsers ? pagesList : pagesList.filter(e => ['home', 'all projects'].includes(e))
-                  }
-                  user={getUsers} 
+                  pagesList={pagesList}
+                  user={currentUser} 
                   handleSidebar={handleSidebar} 
                   sidebar={sidebar} 
-                  setSidebar={setSidebar} />
-              <Route path="/home">
-                <Home projects={projects}/>
-              </Route>
+                  setSidebar={setSidebar} /> 
               <Route path="/all-projects">
                 <AllProjects projects={projects}/>
               </Route>
-              </div>
-                {
-                  getUsers ? 
-                <div>
-              <Route path="/my-projects">
+
+              <Route exact path="/my-projects">
                 <MyProjects/>
               </Route>
-              <Route path="/transactions">
+
+              <Route exact path="/transactions">
                 <Transactions/>
               </Route>
-              <Route path="/account">
+              <Route exact path="/account">
                 <Account/>
               </Route>
-            </div>
-            :
-            <Redirect to="/signin" />
-            }
+              <Route exact path="/create-project">
+                <CreateProject />
+              </Route>
+              </div>
           </Switch>
       </Router>
       

@@ -1,18 +1,39 @@
 import React from 'react';
 import 'cdbreact';
 import styles from './Sidebar.module.css'
-import { Link } from 'wouter';
+import { Link, Redirect, Route, Router } from 'wouter';
+import useToken from '../useToken';
+import Button from '@mui/material/Button';
 
 
 const Sidebar = (props) => {
+    const { token } = useToken();
+
+    const removeToken = () => {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('username');
+      window.location.reload();
+    };
+
     return (
         <div className={styles.mainNav}>
             <div style={{ height: '3em' }}>
                <span style={{ margin: '0 2em' }} onClick={() => props.setSidebar(true)}><i className="fa fa-bars"></i></span>
                <div className={styles.logoContainer}>
-                    <Link href="/all-projects">Project Hub</Link>
+                    <Link className='text-black' href="/all-projects">Project Hub</Link>
                </div>
-               <span style={{ padding: '.5em .75em .5em .75em', backgroundColor: '#333', color: '#FFF', borderRadius: '100%', marginRight: '2em' }}><Link style={{ textDecoration: 'none', color: '#fff' }} href="/account">{props.user ? props.user.first_name.charAt(0) : <i className='fa fa-user'></i>}</Link></span>
+              {
+                !token ?
+                <div className='d-flex w-25 gap-1 justify-content-end mx-2'>
+                  <Link className='btn btn-primary' href="/signin">Sign In</Link>
+                  <Link className='btn btn-info' href="/signup">Sign up</Link>
+                </div> 
+                :
+                <div className='d-flex w-25 gap-1 justify-content-end mx-2'>
+                   <Button onClick={removeToken} variant="contained" color="secondary">Logout</Button>
+                </div> 
+                 }
+               {/* <span style={{ padding: '.5em .75em .5em .75em', backgroundColor: '#333', color: '#FFF', borderRadius: '100%', marginRight: '2em' }}><Link style={{ textDecoration: 'none', color: '#fff' }} href="/account">{props.user ? props.user.first_name.charAt(0) : <i className='fa fa-user'></i>}</Link></span> */}
             </div>
             <div>
                 <ul className={styles.menuItems}>

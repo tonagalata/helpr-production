@@ -55,7 +55,7 @@ export default function ProjectCard(props) {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {props.project.name.charAt(0)}
+            {props.project.project_name.charAt(0)}
           </Avatar>
         }
         action={
@@ -63,14 +63,14 @@ export default function ProjectCard(props) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={props.project.name}
+        title={props.project.project_name}
         subheader={props.project.created_date}
       />
       <CardMedia
         component="img"
         height="194"
-        image={props.project.image}
-        alt={props.project.image}
+        image={props.project.icon_path}
+        alt={props.project.project_name + "image"}
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
@@ -81,7 +81,7 @@ export default function ProjectCard(props) {
         <IconButton aria-label="add to favorites" onClick={handleFavorite}>
           <FavoriteIcon sx={{ color: favorite ? '#ff0000' : '' }} />
         </IconButton>
-        ${fund.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        ${"100000".toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
@@ -97,7 +97,7 @@ export default function ProjectCard(props) {
             <TextField inputRef={money} id="outlined-basic" label="Fund Project" variant="outlined" />
           </Box>
           <Box aria-label="fund-btn">
-            <Button onClick={handleFund} sx={{ backgroundColor: 'green', color: '#fff', height: '4em' }} variant="outlined">Fund</Button>
+            <Button onClick={handleFund} sx={{ height: '4em' }} variant="contained" color="success">Fund</Button>
           </Box>
         </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>

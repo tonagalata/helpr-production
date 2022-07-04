@@ -1,10 +1,9 @@
-.root {
+body {
     background-color: '#fff';
-    height: 100vh;
 }
 
 .paper {
-    margin: 8em 4em;
+    margin-top: 8em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,15 +21,5 @@
 
 .submit {
     margin: 1em 0em 1em 0em !important;
-}
-
-.image {
-    background-image: url(https://source.unsplash.com/random);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-
-.unautherized {
-    color: red;
+    height: 4em;
 }
