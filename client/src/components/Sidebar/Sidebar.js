@@ -12,6 +12,7 @@ const Sidebar = (props) => {
     const removeToken = () => {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('username');
+      sessionStorage.removeItem('session_date');
       window.location.reload();
     };
 

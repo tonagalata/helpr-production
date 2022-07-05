@@ -29,7 +29,7 @@ function App() {
 
   const [sidebar, setSidebar] = useState(false)
   const [pathName, setPathName] = useState()
-  const [currentUser, setCurrentUser] = useState(null)
+  // const [currentUser, setCurrentUser] = useState(null)
   const [projects, setProjects] = useState(null)
 
   const pagesList = ['all projects', 'transactions', 'my projects', 'create project', 'account']
@@ -44,15 +44,29 @@ function App() {
     }
   },[pathName]);
 
-  useEffect(() => {
-    if (user){
-      fetch(`http://localhost:8000/user/${user}/info`)
-      .then(response => response.json())
-      // .then(data => console.log(data.username))
-      .then(data => setCurrentUser(data.username))
-    }
-  },[user]);
+  // useEffect(() => {
+  //   if (user){
+  //     fetch(`http://localhost:8000/user/${user}/info`)
+  //     .then(response => response.json())
+  //     // .then(data => console.log(data.username))
+  //     .then(data => setCurrentUser(data.username))
+  //   }
+  // },[user]);
 
+
+  useEffect(() => {
+    if (token){
+      const currentDate = new Date();
+      const sessionDate = new Date(JSON.parse(sessionStorage.getItem('session_date')));
+
+      if(currentDate > sessionDate){
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('session_date');
+        window.location.reload();
+      }    
+    }
+  }, [token]);
 
   useEffect(() => {
     if (projects === null){
@@ -84,7 +98,7 @@ if(!token) {
                   <Sidebar
                     faIcons={faIcons} 
                     pagesList={['all-projects']}
-                    user={currentUser} 
+                    // user={currentUser} 
                     handleSidebar={handleSidebar} 
                     sidebar={sidebar} 
                     setSidebar={setSidebar} 
@@ -119,7 +133,7 @@ return (
               <Sidebar
                   faIcons={faIcons} 
                   pagesList={pagesList}
-                  user={currentUser} 
+                  // user={currentUser} 
                   handleSidebar={handleSidebar} 
                   sidebar={sidebar} 
                   setSidebar={setSidebar} /> 

@@ -16,6 +16,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import classes from './ProjectCard.module.css'
+import useUser from '../useUser';
+import useToken from '../useToken';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -29,7 +32,12 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function ProjectCard(props) {
+
+  const { user } = useUser();
+  const { token } = useToken();
+
   const [expanded, setExpanded] = useState(false);
+  const [expandedSetting, setExpandedSetting] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [fund, setFund] = useState(props.project.money);
 
@@ -37,11 +45,19 @@ export default function ProjectCard(props) {
 
 
   const handleFavorite = () => {
+
     setFavorite(!favorite);
   };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const handleExpandSetting = (e) => {
+   const pro_key = e.target.offsetParent.parentElement.id
+   handleAddMember(pro_key, user)
+
+    setExpandedSetting(!expandedSetting);
   };
 
   const handleFund = () => {
@@ -50,8 +66,48 @@ export default function ProjectCard(props) {
       }
   };
 
+  const handleAddMember = (project_key, user) => {
+
+    console.log(project_key, user, token, "<-------------- Add Member")
+
+    const member_info = {
+      "project_key": project_key,
+      "username": [
+        user
+      ],
+      "role": "Member"
+    }
+
+    const url = `http://localhost:8000/project/members/add`
+  
+        fetch(url, {
+          method: 'POST',
+          headers: new Headers({
+            'Authorization': `Bearer ${token.access_token}`,      
+            'Accept': 'application/json',
+            'Content-Type':'application/json'  
+          }),
+          body: JSON.stringify(member_info)
+        })
+        .then(res => res.json())
+  }
+
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345 }} id={props.project._key}>
+        {
+        (expandedSetting && (token && user)) &&
+        <>
+        <span className={classes.expandedSettingSpanOver}></span>
+        <span className={classes.expandedSettingSpan}></span>
+        <div className={classes.expandedSetting}>
+          <ul>
+            <li onClick={handleExpandSetting}>Add Member</li>
+            <li onClick={handleExpandSetting}>Update</li>
+            <li onClick={handleExpandSetting}>Delete</li>
+          </ul>
+        </div>
+        </>
+      }
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -59,7 +115,7 @@ export default function ProjectCard(props) {
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
+          <IconButton aria-label="settings" onClick={() => setExpandedSetting(!expandedSetting)}>
             <MoreVertIcon />
           </IconButton>
         }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,31 +13,30 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import classes from './SignUpForm.module.css'
 import useToken from '../useToken';
+import useUser from "../useUser";
 
 
 export default function SignUpForm(props) {
 
     const { token, setToken } = useToken();
+    const { user, setUser} = useUser();
 
-    const [getUsers, setGetUsers] = useState(null)
+    // const [getUsers, setGetUsers] = useState(null)
     const firstName = useRef("")
     const lastName = useRef("")
     const email = useRef("")
     const userName = useRef("")
+    const imagePath = useRef("")
     const password = useRef("")
 
     const handleGetUser = async (username, password) => {
-      
-        console.log(username, password)
       
         const userNameVal = username
         const passwordVal = password
       
       
       
-        const user = `username=${userNameVal}&password=${passwordVal}&grant_type=password`
-      
-        console.log(user)
+        const users = `username=${userNameVal}&password=${passwordVal}&grant_type=password`
       
         const url = `http://localhost:8000/token`
       
@@ -48,8 +47,11 @@ export default function SignUpForm(props) {
               headers: new Headers({    
                 'Content-Type': 'application/x-www-form-urlencoded',      
               }),
-              body: user
-            }).then(res => res.json()).then( token => setToken(token))
+              body: users
+            }).then(res => res.json()).then( token => {
+              setToken(token)
+              setUser(username)
+            })
             
         //   }
       
@@ -57,60 +59,61 @@ export default function SignUpForm(props) {
 
 
     const handleCreateUser = (e) => {
-  // "disabled": false,
-  // "image_path": "string"
-    e.preventDefault()
-    const firstNameVal = firstName.current.value
-    const lastNameVal = lastName.current.value
-    const userNameVal = userName.current.value
-    const emailVal = email.current.value
-    const passwordVal = password.current.value
-    const disableVal = false
-    const imagePath = ""
-    
-    const createUser = {
-        "first_name": firstNameVal,
-        "last_name": lastNameVal,
-        "username": userNameVal,
-        "email": emailVal,
-        "disabled": disableVal,
-        "image_path": imagePath,
-    }
-    console.log(e, createUser)
 
-    const requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(createUser)
-    };
+        e.preventDefault()
+        
+        const firstNameVal = firstName.current.value
+        const lastNameVal = lastName.current.value
+        const userNameVal = userName.current.value
+        const emailVal = email.current.value
+        const passwordVal = password.current.value
+        const imagePathVal = imagePath
+        const disableVal = false
 
-    const url = `http://localhost:8000/user/signup?password=${passwordVal}`
-
-
-        if (getUsers === null){
-        fetch(url, {
-            method: 'POST',
-            headers: {          
-            'Accept': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-            'Access-Control-Request-Method': 'GET, POST, DELETE, PUT, OPTIONS',
-            'Content-Type':'application/json'
-            },
-            body: JSON.stringify(createUser)
-        }).then(res => console.log(res)).then(data => {
-            if(!token){
-                handleGetUser(userNameVal, passwordVal)
-            }
-        })
-
+        const createUser = {
+            "first_name": firstNameVal,
+            "last_name": lastNameVal,
+            "username": userNameVal,
+            "email": emailVal,
+            "disabled": disableVal,
+            "image_path": imagePathVal,
         }
+        console.log(e, createUser)
+
+        const requestOptions = {
+            method: 'POST',
+            body: JSON.stringify(createUser)
+        };
+
+        const url = `http://localhost:8000/user/signup?password=${passwordVal}`
+
+
+            if (!user){
+            fetch(url, {
+                method: 'POST',
+                headers: {          
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+                'Access-Control-Request-Method': 'GET, POST, DELETE, PUT, OPTIONS',
+                'Content-Type':'application/json'
+                },
+                body: JSON.stringify(createUser)
+            }).then(res => res.json())
+            .then(data => {
+                if(!token){
+                  handleGetUser(userNameVal, passwordVal)
+                }
+            })
+
+            }
 
 
     };
 
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="md">
       <Link className="btn btn-primary" style={{ textDecoration: 'none', color: "#fff", top: '2em', marginTop: '1em', right: '1em', position: 'absolute' }} href="/all-projects" variant="body2"> ← Go Back To All Projects</Link>
       <CssBaseline />
       <div className={classes.paper}>
@@ -169,6 +172,18 @@ export default function SignUpForm(props) {
                 name="username"
                 autoComplete="username"
                 inputRef={userName}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="image_path"
+                label="Image Url"
+                name="image_path"
+                autoComplete="image_path"
+                inputRef={imagePath}
               />
             </Grid>
             <Grid item xs={12}>

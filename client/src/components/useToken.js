@@ -13,6 +13,11 @@ export default function useToken() {
 
   const saveToken = userToken => {
     if(userToken){
+        const tokenDate = new Date();
+        const tokenDateMinutes = new Date(tokenDate);
+        tokenDateMinutes.setMinutes(tokenDate.getMinutes() + 30);
+
+        sessionStorage.setItem('session_date', JSON.stringify(tokenDateMinutes));
         sessionStorage.setItem('token', JSON.stringify(userToken));
         setToken(userToken.token);
         window.location.reload();

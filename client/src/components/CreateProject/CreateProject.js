@@ -44,7 +44,7 @@ export default function CreateProject(props) {
             fetch(url, {
               method: 'POST',
               headers: new Headers({
-                'Authorization': `Bearer ${token}`,      
+                'Authorization': `Bearer ${token.access_token}`,      
                 'Accept': 'application/json',
                 'Content-Type':'application/json'  
               }),
@@ -74,7 +74,7 @@ export default function CreateProject(props) {
             fetch(url, {
               method: 'POST',
               headers: new Headers({
-                'Authorization': `Bearer ${token}`,      
+                'Authorization': `Bearer ${token.access_token}`,      
                 'Accept': 'application/json',
                 'Content-Type':'application/json'  
               }),
@@ -82,59 +82,6 @@ export default function CreateProject(props) {
             })
             .then(res => res.json())
       }
-
-
-    // const handleCreateUser = (e) => {
-  // // "disabled": false,
-  // // "image_path": "string"
-  //   e.preventDefault()
-  //   const firstNameVal = firstName.current.value
-  //   const lastNameVal = lastName.current.value
-  //   const userNameVal = userName.current.value
-  //   const emailVal = email.current.value
-  //   const passwordVal = password.current.value
-  //   const disableVal = false
-  //   const imagePath = ""
-    
-  //   const createUser = {
-  //       "first_name": firstNameVal,
-  //       "last_name": lastNameVal,
-  //       "username": userNameVal,
-  //       "email": emailVal,
-  //       "disabled": disableVal,
-  //       "image_path": imagePath,
-  //   }
-  //   console.log(e, createUser)
-
-  //   const requestOptions = {
-  //       method: 'POST',
-  //       body: JSON.stringify(createUser)
-  //   };
-
-  //   const url = `http://localhost:8000/user/signup?password=${passwordVal}`
-
-
-  //       if (getUsers === null){
-  //       fetch(url, {
-  //           method: 'POST',
-  //           headers: {          
-  //           'Accept': 'application/json',
-  //           'Access-Control-Allow-Origin': '*',
-  //           'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-  //           'Access-Control-Request-Method': 'GET, POST, DELETE, PUT, OPTIONS',
-  //           'Content-Type':'application/json'
-  //           },
-  //           body: JSON.stringify(createUser)
-  //       }).then(res => console.log(res)).then(data => {
-  //           if(!token){
-  //               handleGetUser(userNameVal, passwordVal)
-  //           }
-  //       })
-
-  //       }
-
-
-  //   };
 
   return (
     <Container component="main" maxWidth="lg">
