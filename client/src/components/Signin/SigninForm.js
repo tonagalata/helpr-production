@@ -56,8 +56,8 @@ const SignInForm = (props) => {
                     return res.json()
                 }
             })
-            .then( token => {
-                props.setToken(token.access_token)
+            .then( UserToken => {
+                props.setToken(UserToken.access_token)
                 props.setUser(userNameVal)
             })
             .catch( () => {

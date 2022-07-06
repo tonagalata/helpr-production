@@ -1,5 +1,6 @@
 import React from 'react';
-import ProjectCard from '../../components/Card/ProjectCard'
+import { Link } from 'wouter';
+import ProjectCards from '../../components/Card/ProjectCards'
 import styles from './AllProjects.module.css'
   
 const AllProjects = (props) => {
@@ -10,9 +11,11 @@ const AllProjects = (props) => {
 
       {
        props.projects && props.projects.map((project, i) =>
-        <div key={i}>
-          <ProjectCard key={i} project={project} />
-        </div>
+          <Link href={`/all-projects/${project._key}`}>
+            <div key={i}>
+                <ProjectCards key={i} project={project} />
+            </div>
+          </Link>
        ) 
       }
 
