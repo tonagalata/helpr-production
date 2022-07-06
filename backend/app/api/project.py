@@ -54,7 +54,7 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
 
     return {"post": doc, "project_key": doc['_key']}
 
-# TODO update project
+
 @router.put("/update/{project_key}", tags=['Project'])
 async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None), apiKey: dict=Depends(get_current_user)):
     project = project_collection.get(project_key)
@@ -80,7 +80,7 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
 
 # TODO assign project to cohort
 
-# TODO add project members
+
 @router.post("/members/add", tags=['Project'])
 async def add_project_members(body: ProjectMember, apiKey: dict=Depends(get_current_user)):
     users_added = []
