@@ -212,7 +212,7 @@ async def link_cohort_university(body: CohortUniLink, apiKey: dict=Depends(get_c
     return new_edge
 
 
-@router.post("/cohort/add/project", tags=['Project'])
+@router.post("/cohort/project/add", tags=['Project'])
 async def link_project_cohort(body: CohortProject, apiKey: dict=Depends(get_current_user)):
     project = project_collection.get(body.project_key)
     cohort = cohort_collection.get(body.cohort_key)
