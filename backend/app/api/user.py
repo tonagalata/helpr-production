@@ -92,7 +92,15 @@ async def user_signup(user: User = Body(default=None), password: str = None):
     doc['image_path'] = user_d.get('image_path','')
     doc['disabled'] = False
 
+    doc['available_funds'] = 0
+
     doc['_key'] = user_d['username'].lower().replace(" ", "")
+
+    if password is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Expected 'password' query parameter. Got None."
+        )
 
     doc['password'] = hash_password(password)
     
@@ -100,8 +108,32 @@ async def user_signup(user: User = Body(default=None), password: str = None):
 
     return doc
 
-@router.put("/update-password", tags=['User'])
-async def update_user(username: str, password: str, apiKey: dict=Depends(get_current_user)):
+@router.put("/update/info", tags=['User'])
+async def update_user(user: UserUpdate, apiKey: dict=Depends(get_current_user)):
+    update = user.dict()
+
+    update.pop("password", None)
+
+    user = get_user(user_collection, update['username'])
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with username '{update['username']}' does not exist."
+        )
+
+    pop_list = ['utc_date_created']
+    for key in update.keys():
+        if update[key] is None:
+            pop_list.append(key)
+    
+    [update.pop(d, None) for d in pop_list]
+
+    new_user = user_collection.udpate(update, keep_none=False, return_new=True)
+
+    return new_user
+
+@router.put("/update/password", tags=['User'])
+async def update_user_pass(username: str, password: str, apiKey: dict=Depends(get_current_user)):
     
     user = get_user(user_collection, username)
 

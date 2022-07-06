@@ -47,14 +47,16 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
 
     doc['github_repo'] = project.github_repo.lower()
     doc['_key'] = set_key_number(project_collection, project.github_repo.split('/')[-1])
-    
+    doc['hearts'] = 0
+    doc['funds'] = 0
+
     project_collection.insert(doc)
 
     return {"post": doc, "project_key": doc['_key']}
 
-# TODO update project
+
 @router.put("/update/{project_key}", tags=['Project'])
-async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None)):
+async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None), apiKey: dict=Depends(get_current_user)):
     project = project_collection.get(project_key)
 
     if project is None:
@@ -78,7 +80,7 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
 
 # TODO assign project to cohort
 
-# TODO add project members
+
 @router.post("/members/add", tags=['Project'])
 async def add_project_members(body: ProjectMember, apiKey: dict=Depends(get_current_user)):
     users_added = []
@@ -137,7 +139,7 @@ async def get_all_members(project_key: str):
 
 
 @router.delete('/members/{project_key}/{username}', tags=['Project'])
-async def remove_member(project_key: str, username: str):
+async def remove_member(project_key: str, username: str, apiKey: dict=Depends(get_current_user)):
     edge = memberOf_edge.get(f'{username}-{project_key}')
     if edge is None:
         raise HTTPException(
@@ -150,7 +152,7 @@ async def remove_member(project_key: str, username: str):
 
 
 @router.delete("/delete/{project_key}", tags=['Project'])
-async def delete_project(project_key: str):
+async def delete_project(project_key: str, apiKey: dict=Depends(get_current_user)):
     
     doc = project_collection.get(project_key)
     if doc is None:
