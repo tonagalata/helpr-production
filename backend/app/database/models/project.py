@@ -22,3 +22,10 @@ class ProjectMember(BaseModel):
     project_key: str
     username: List[str]
     role: Optional[str] = "Member"
+
+class ProjectFund(BaseModel):
+    project_key: str
+    username: str
+    funding_amount: str
+    transaction_datetime: datetime.datetime = datetime.datetime.utcnow()
+ 

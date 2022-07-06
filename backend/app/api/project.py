@@ -78,8 +78,6 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
 
     return new_project
 
-# TODO assign project to cohort
-
 
 @router.post("/members/add", tags=['Project'])
 async def add_project_members(body: ProjectMember, apiKey: dict=Depends(get_current_user)):

@@ -30,6 +30,7 @@ if db.has_graph("hub_graph"):
 else:
     hub_graph = db.create_graph("hub_graph")
 
+# Edges: (User -> Cohort) && (User -> Project)
 if not hub_graph.has_edge_definition("memberOf"):
     memberOf_edge = hub_graph.create_edge_definition(
         edge_collection="memberOf",
@@ -39,6 +40,7 @@ if not hub_graph.has_edge_definition("memberOf"):
 else:
     memberOf_edge = hub_graph.edge_collection("memberOf")
 
+# Project -> Cohort Link
 if not hub_graph.has_edge_definition("createdFor"):
     createdFor_edge = hub_graph.create_edge_definition(
         edge_collection="createdFor",
@@ -48,6 +50,7 @@ if not hub_graph.has_edge_definition("createdFor"):
 else:
     createdFor_edge = hub_graph.edge_collection("createdFor")
 
+# Funding edges
 if not hub_graph.has_edge_definition("isFunding"):
     isFunding_edge = hub_graph.create_edge_definition(
         edge_collection="isFunding",
@@ -57,6 +60,7 @@ if not hub_graph.has_edge_definition("isFunding"):
 else:
     isFunding_edge = hub_graph.edge_collection("isFunding")
 
+# University sponsors
 if not hub_graph.has_edge_definition("sponsoredBy"):
     sponsoredBy_edge = hub_graph.create_edge_definition(
         edge_collection="sponsoredBy",
