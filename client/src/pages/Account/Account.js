@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -36,8 +36,8 @@ const rows = [
   
 const Account = () => {
 
-  const { user } = useUser();
-  const { token } = useToken();
+  const { user, setUser } = useUser();
+  const { token, setToken } = useToken();
 
 
   const [userStatus, setUserStatus] = useState();
@@ -73,6 +73,35 @@ const Account = () => {
     }
   },[]);
 
+  const handleUpdateUserInfo =  () => {
+    handleGetUser();
+
+   const params = {
+      'image_path': profileImg,
+      'first_name' : firstName,
+      'last_name' : lastName,
+      'email' : email,
+      'username' : username
+    }
+
+    console.log(token)
+  
+    const url = `http://localhost:8000/user/update/info`
+  
+        fetch(url, {
+          method: 'PUT',
+          headers: new Headers({
+            'Authorization': `Bearer ${token}`,      
+            'Accept': 'application/json',
+            'Content-Type':'application/json'  
+          }),
+          body: JSON.stringify(params)
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+        })
+  }
   const handleUpdatePassword =  () => {
   
     const url = `http://localhost:8000/user/update-password?username=${user}&password=${password}`
@@ -91,35 +120,65 @@ const Account = () => {
         })
   }
 
-  const handleUpdateUser = async () => {
+  const handleDeleteUser = async () => {
     
     
-      const project = {
-        "project_name": firstName.current.value,
-        "github_repo": lastName.current.value,
-        "password": password,
-        "short_desc": email.current.value,
-        "icon_path": username || "https://images.unsplash.com/photo-1595452767427-0905ad9b036d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
-      }
+      // const project = {
+      //   "project_name": firstName.current.value,
+      //   "github_repo": lastName.current.value,
+      //   "password": password,
+      //   "short_desc": email.current.value,
+      //   "icon_path": username || "https://images.unsplash.com/photo-1595452767427-0905ad9b036d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
+      // }
     
-      const url = `http://localhost:8000/project/create`
+      // const url = `http://localhost:8000/project/create`
     
-          fetch(url, {
-            method: 'POST',
-            headers: new Headers({
-              'Authorization': `Bearer ${token}`,      
-              'Accept': 'application/json',
-              'Content-Type':'application/json'  
-            }),
-            body: JSON.stringify(project)
-          })
-          .then(res => res.json())
-          .then(data => {
-            handleAddMember(data.project_key, user)
-          })
+      //     fetch(url, {
+      //       method: 'POST',
+      //       headers: new Headers({
+      //         'Authorization': `Bearer ${token}`,      
+      //         'Accept': 'application/json',
+      //         'Content-Type':'application/json'  
+      //       }),
+      //       body: JSON.stringify(project)
+      //     })
+      //     .then(res => res.json())
+      //     .then(data => {
+      //       handleAddMember(data.project_key, user)
+      //     })
           // .then( token => setToken(token))
           
     
+    };
+
+    const handleGetUser = async (e) => {
+
+      e.preventDefault()
+    
+      const user = `username=${username}&password=${password}&grant_type=password`
+    
+      const url = `http://localhost:8000/token`
+    
+
+          fetch(url, {
+            method: 'POST',
+            headers: new Headers({    
+              'Content-Type': 'application/x-www-form-urlencoded',      
+            }),
+            body: user
+          })
+          .then(async res => { 
+              if (!res.ok) {
+                  const error = res.status;
+                  return Promise.reject(error);
+              } else {
+                  return res.json()
+              }
+          })
+          .then( UserToken => {
+              setToken(UserToken.access_token)
+              setUser(username)
+          })
     };
 
     const handleAddMember = (project_key, user) => {
@@ -173,9 +232,6 @@ const Account = () => {
                 fullWidth
                 id="first_name"
                 label="First Name"
-                InputProps={{
-                  readOnly: true,
-                }}
                 defaultValue={firstName}
               />
             </Grid>
@@ -188,9 +244,6 @@ const Account = () => {
                 label="Last Name"
                 name="last_name"
                 autoComplete="lname"
-                InputProps={{
-                  readOnly: true,
-                }}
                 defaultValue={lastName}
               />
             </Grid>
@@ -203,9 +256,6 @@ const Account = () => {
                 label="Username"
                 name="username"
                 autoComplete="username"
-                InputProps={{
-                  readOnly: true,
-                }}
                 defaultValue={username}
               />
             </Grid>
@@ -219,10 +269,20 @@ const Account = () => {
                 type="email"
                 id="email"
                 autoComplete="email"
-                InputProps={{
-                  readOnly: true,
-                }}
                 defaultValue={email}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="profile"
+                label="Profile Image"
+                type="profile_image"
+                id="profileImage"
+                autoComplete="profile image"
+                defaultValue={profileImg}
               />
             </Grid>
             <Grid item xs={12}>
@@ -239,6 +299,7 @@ const Account = () => {
                 defaultValue={"*************"}
               />
             </Grid>
+
             <Grid item xs={12}>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -284,13 +345,23 @@ const Account = () => {
               type="submit"
               fullWidth
               variant="contained"
+              color="secondary"
+              className={classes.submit}
+              onClick={handleUpdateUserInfo}
+            >
+              Update User
+            </Button>
+          </div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
               color="error"
               className={classes.submit}
-              onClick={handleUpdateUser}
+              onClick={handleDeleteUser}
             >
               Delete User
             </Button>
-          </div>
         </form>
       </div>
     </Container>
