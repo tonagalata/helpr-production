@@ -66,7 +66,7 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
         )
 
     project = body.dict()
-    pop_list = ['utc_date_created']
+    pop_list = ['utc_date_created', 'funds']
     for key in project.keys():
         if project[key] is None:
             pop_list.append(key)
