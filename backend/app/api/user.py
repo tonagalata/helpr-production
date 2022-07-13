@@ -128,6 +128,8 @@ async def update_user(user: UserUpdate, apiKey: dict=Depends(get_current_user)):
     
     [update.pop(d, None) for d in pop_list]
 
+    update['_key'] = update['username']
+    
     new_user = user_collection.update(update, keep_none=False, return_new=True)
 
     return new_user
