@@ -26,3 +26,7 @@ class CohortUsers(BaseModel):
     cohort_key: str
     users: List[str]
     role: str = Field(default='Student')
+
+class CohortProject(BaseModel):
+    cohort_key: str
+    project_key: str

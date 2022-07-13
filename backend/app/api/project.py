@@ -66,7 +66,7 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
         )
 
     project = body.dict()
-    pop_list = ['utc_date_created']
+    pop_list = ['utc_date_created', 'funds']
     for key in project.keys():
         if project[key] is None:
             pop_list.append(key)
@@ -77,8 +77,6 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
     new_project = project_collection.update(project, keep_none=False, return_new=True)
 
     return new_project
-
-# TODO assign project to cohort
 
 
 @router.post("/members/add", tags=['Project'])
