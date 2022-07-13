@@ -23,3 +23,6 @@ class UserUpdate(User):
     password: Optional[str]
     disabled: Optional[bool] = Field(default=None)
 
+class UserFunding(BaseModel):
+    username: str
+    additional_funds: int = Field(gt=0)
