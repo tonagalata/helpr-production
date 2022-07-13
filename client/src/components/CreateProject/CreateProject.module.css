@@ -1,0 +1,25 @@
+body {
+    background-color: '#fff';
+}
+
+.paper {
+    margin-top: 8em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+.avatar {
+    margin: 1em;
+    background-color: #f50057 !important;
+}
+
+.form {
+    width: 100%;
+    margin-top: 3em;
+}
+
+.submit {
+    margin: 1em 0em 1em 0em !important;
+    height: 4em;
+}

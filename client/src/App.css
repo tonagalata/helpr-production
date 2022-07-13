@@ -8,3 +8,8 @@
   flex-direction: row;
   gap: 1em
 } */
+
+.login {
+    font-family: sans-serif;
+    text-align: center;
+}
