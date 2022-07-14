@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import ProjectCard from '../../components/Card/ProjectCard'
+import ProjectCard from '../../components/Card/ProjectCards'
 import styles from './Home.module.css'
 import AllProjects from '../AllProjects/AllProjects';
 

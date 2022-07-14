@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import { Redirect, Route, Router, Switch } from "wouter";
 import Home from './pages/Home/Home';
 import AllProjects from './pages/AllProjects/AllProjects';
+import SelectedProject from './pages/AllProjects/SelectedProjects';
 import MyProjects from './pages/MyProjects/MyProjects';
 import Transactions from './pages/Transactions/Transactions';
 import Account from './pages/Account/Account';
@@ -26,7 +27,8 @@ function App() {
   const { token, setToken } = useToken();
   const { user, setUser } = useUser();
 
-
+  const [favorite, setFavorite] = useState(false);
+  const [fund, setFund] = useState();
   const [sidebar, setSidebar] = useState(false)
   const [pathName, setPathName] = useState()
   // const [currentUser, setCurrentUser] = useState(null)
@@ -43,15 +45,6 @@ function App() {
       window.location.reload();
     }
   },[pathName]);
-
-  // useEffect(() => {
-  //   if (user){
-  //     fetch(`http://localhost:8000/user/${user}/info`)
-  //     .then(response => response.json())
-  //     // .then(data => console.log(data.username))
-  //     .then(data => setCurrentUser(data.username))
-  //   }
-  // },[user]);
 
 
   useEffect(() => {
@@ -137,8 +130,21 @@ return (
                   handleSidebar={handleSidebar} 
                   sidebar={sidebar} 
                   setSidebar={setSidebar} /> 
-              <Route path="/all-projects">
+              <Route exact path="/all-projects">
                 <AllProjects projects={projects}/>
+              </Route>
+
+              {
+                
+              }
+              <Route exact path="/all-projects/:key">
+                <SelectedProject 
+                  projects={projects}
+                  favorite={favorite}
+                  setFavorite={setFavorite}
+                  fund={fund}
+                  setFund={setFund}
+                />
               </Route>
 
               <Route exact path="/my-projects">

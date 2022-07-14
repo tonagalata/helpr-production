@@ -17,6 +17,7 @@ class ProjectUpdate(Project):
     utc_date_created: Optional[datetime.datetime]
     hearts: Optional[int]
     funds: Optional[float]
+    project_name: Optional[str]
 
 class ProjectMember(BaseModel):
     project_key: str
