@@ -59,7 +59,7 @@ function App() {
         window.location.reload();
       }    
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (projects === null){
