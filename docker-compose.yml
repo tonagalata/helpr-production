@@ -12,7 +12,7 @@ services:
       - ARANGO_URL=172.16.231.99
       - ARANGO_USER=${ARANGO_USER}
     volumes:
-      - ./backend/:/app/
+      - backend:/app/
     networks:
       backend:
         ipv4_address: 172.16.231.100
@@ -28,7 +28,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./client/:/app/
+      - frontend:/app/
     networks:
       backend:
         ipv4_address: 172.16.231.98
@@ -71,3 +71,5 @@ networks:
 
 volumes:
   arango:
+  backend:
+  frontend:

@@ -6,6 +6,8 @@ from app.auth.jwt_handler import Token, create_access_token
 from app.auth.pass_validation import authenticate_user
 from app.database.collection import user_collection
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.funding import router as funding_routes
+from app.api.org import router as org_routes
 
 from datetime import datetime, timedelta
 
@@ -25,7 +27,8 @@ app.add_middleware(
 
 app.include_router(user_routes)
 app.include_router(project_routes)
-
+app.include_router(org_routes)
+app.include_router(funding_routes)
 
 @app.post("/token", response_model=Token, tags=['Auth'])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
