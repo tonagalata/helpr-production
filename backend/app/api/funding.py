@@ -21,7 +21,6 @@ router = APIRouter(
 )
 
 
-# TODO Create Funding Node
 @router.post("/project", tags=['Funding'])
 async def fund_project(body: FundingRequest, apiKey: dict=Depends(get_current_user)):
     # Check project

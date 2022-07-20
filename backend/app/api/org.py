@@ -8,7 +8,7 @@ from app.database.models.university import CohortUniLink, University, University
 from app.database.collection import (
     hub_graph, memberOf_edge, sponsoredBy_edge, createdFor_edge, db
 )
-from backend.app.auth.pass_validation import get_user
+from app.auth.pass_validation import get_user
 
 cohort_collection = hub_graph.vertex_collection("cohort")
 university_collection = hub_graph.vertex_collection("university")
