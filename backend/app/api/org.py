@@ -65,11 +65,23 @@ async def get_cohort_projects(
         return []
     return [project for project in results]
     
+@router.get('/cohort/user/get-all', tags=['Cohort'])
+async def get_cohort_users(
+    cohort_key: str
+):
+    query = f"""
+    FOR v, e in 1..1 INBOUND 'cohort/{cohort_key}' memberOf
+    RETURN v
+    """
+    results = db.aql.execute(query, count=True)
+
+    if results.count() == 0:
+        return []
+    return [user for user in results]
 
 @router.post("/cohort/user/add", tags=['Cohort'])
 async def add_linked_user(
-    body: CohortUsers,
-    apiKey: dict=Depends(get_current_user)
+    body: CohortUsers
 ):
     linked = []
     updated_links = []
@@ -213,7 +225,7 @@ async def link_cohort_university(body: CohortUniLink, apiKey: dict=Depends(get_c
 
 
 @router.post("/cohort/project/add", tags=['Project'])
-async def link_project_cohort(body: CohortProject, apiKey: dict=Depends(get_current_user)):
+async def link_project_cohort(body: CohortProject):
     project = project_collection.get(body.project_key)
     cohort = cohort_collection.get(body.cohort_key)
 

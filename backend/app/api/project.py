@@ -34,7 +34,7 @@ async def get_one_project(project_key: str):
     return doc
 
 @router.post("/create", tags=['Project'])
-async def create_project(project: Project = Body(default=None), apiKey: dict=Depends(get_current_user)):
+async def create_project(project: Project = Body(default=None)):
 
     if not check_unique(project_collection, project.github_repo.lower(), "github_repo"):
         raise HTTPException(
@@ -56,7 +56,7 @@ async def create_project(project: Project = Body(default=None), apiKey: dict=Dep
 
 
 @router.put("/update/{project_key}", tags=['Project'])
-async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None), apiKey: dict=Depends(get_current_user)):
+async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None)):
     project = project_collection.get(project_key)
 
     if project is None:
@@ -80,7 +80,7 @@ async def udpate_project(project_key: str, body: ProjectUpdate=Body(default=None
 
 
 @router.post("/members/add", tags=['Project'])
-async def add_project_members(body: ProjectMember, apiKey: dict=Depends(get_current_user)):
+async def add_project_members(body: ProjectMember):
     users_added = []
     users_failed = []
     users_updated = []
@@ -137,7 +137,7 @@ async def get_all_members(project_key: str):
 
 
 @router.delete('/members/{project_key}/{username}', tags=['Project'])
-async def remove_member(project_key: str, username: str, apiKey: dict=Depends(get_current_user)):
+async def remove_member(project_key: str, username: str):
     edge = memberOf_edge.get(f'{username}-{project_key}')
     if edge is None:
         raise HTTPException(
@@ -150,7 +150,7 @@ async def remove_member(project_key: str, username: str, apiKey: dict=Depends(ge
 
 
 @router.delete("/delete/{project_key}", tags=['Project'])
-async def delete_project(project_key: str, apiKey: dict=Depends(get_current_user)):
+async def delete_project(project_key: str):
     
     doc = project_collection.get(project_key)
     if doc is None:

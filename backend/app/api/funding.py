@@ -22,7 +22,7 @@ router = APIRouter(
 
 
 @router.post("/project", tags=['Funding'])
-async def fund_project(body: FundingRequest, apiKey: dict=Depends(get_current_user)):
+async def fund_project(body: FundingRequest):
     # Check project
     response_body = {}
 
