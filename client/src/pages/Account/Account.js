@@ -21,6 +21,7 @@ import Container from "@mui/material/Container";
 import classes from './Account.module.css'
 import useToken from "../../components/useToken";
 import useUser from "../../components/useUser";
+import LoadingImg from "../../images/loading.gif"
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -42,11 +43,11 @@ const Account = () => {
 
   const [userStatus, setUserStatus] = useState();
   const [password, setpassword] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [email, setEmail] = useState();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState();
-  const [profileImg, setprofileImg] = useState("https://source.unsplash.com/random)");
+  const [profileImg, setprofileImg] = useState("https://source.unsplash.com/random");
 
     useEffect(() => {
     if (user){
@@ -71,7 +72,7 @@ const Account = () => {
         }
       })
     }
-  },[]);
+  },[user]);
 
   const handleUpdateUserInfo =  () => {
     handleGetUser();
@@ -81,7 +82,7 @@ const Account = () => {
       'first_name' : firstName,
       'last_name' : lastName,
       'email' : email,
-      'username' : username
+      'username' : user
     }
 
     console.log(token)
@@ -96,10 +97,6 @@ const Account = () => {
             'Content-Type':'application/json'  
           }),
           body: JSON.stringify(params)
-        })
-        .then(res => res.json())
-        .then(data => {
-          console.log(data)
         })
   }
   const handleUpdatePassword =  () => {
@@ -122,31 +119,26 @@ const Account = () => {
 
   const handleDeleteUser = async () => {
     
-    
-      // const project = {
-      //   "project_name": firstName.current.value,
-      //   "github_repo": lastName.current.value,
-      //   "password": password,
-      //   "short_desc": email.current.value,
-      //   "icon_path": username || "https://images.unsplash.com/photo-1595452767427-0905ad9b036d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
-      // }
-    
-      // const url = `http://localhost:8000/project/create`
-    
-      //     fetch(url, {
-      //       method: 'POST',
-      //       headers: new Headers({
-      //         'Authorization': `Bearer ${token}`,      
-      //         'Accept': 'application/json',
-      //         'Content-Type':'application/json'  
-      //       }),
-      //       body: JSON.stringify(project)
-      //     })
-      //     .then(res => res.json())
-      //     .then(data => {
-      //       handleAddMember(data.project_key, user)
-      //     })
-          // .then( token => setToken(token))
+    const url = `http://localhost:8000/user/delete?username=${user}`
+  
+    fetch(url, {
+      method: 'DELETE',
+      headers: new Headers({
+        'Authorization': `Bearer ${token.access_token}`,      
+        'Accept': 'application/json',
+        'Content-Type':'application/json'  
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+    })
+      
+
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('session_date');
+      window.location.reload();
           
     
     };
@@ -181,32 +173,34 @@ const Account = () => {
           })
     };
 
-    const handleAddMember = (project_key, user) => {
+    // const handleAddMember = (project_key, user) => {
 
-      const member_info = {
-        "project_key": project_key,
-        "username": [
-          user
-        ],
-        "role": "Member"
-      }
+    //   const member_info = {
+    //     "project_key": project_key,
+    //     "username": [
+    //       user
+    //     ],
+    //     "role": "Member"
+    //   }
 
-      const url = `http://localhost:8000/project/members/add`
+    //   const url = `http://localhost:8000/project/members/add`
     
-          fetch(url, {
-            method: 'POST',
-            headers: new Headers({
-              'Authorization': `Bearer ${token.access_token}`,      
-              'Accept': 'application/json',
-              'Content-Type':'application/json'  
-            }),
-            body: JSON.stringify(member_info)
-          })
-          .then(res => res.json())
-    }
+    //       fetch(url, {
+    //         method: 'POST',
+    //         headers: new Headers({
+    //           'Authorization': `Bearer ${token.access_token}`,      
+    //           'Accept': 'application/json',
+    //           'Content-Type':'application/json'  
+    //         }),
+    //         body: JSON.stringify(member_info)
+    //       })
+    //       .then(res => res.json())
+    // }
 
-    if(!(firstName && lastName && email && username)) {
-      return <span style={{ margin: '0 auto', fontSize: '100px', textAlign: 'center' }}>Loading...</span>
+    if(!(firstName && lastName && email && username && user)) {
+      return <span style={{ margin: '0 auto', fontSize: '100px', textAlign: 'center', display: "flex", justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <img src={LoadingImg} alt="loading image" />
+      </span>
     }
 
 
@@ -233,6 +227,7 @@ const Account = () => {
                 id="first_name"
                 label="First Name"
                 defaultValue={firstName}
+                onChange={e => setFirstName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -245,21 +240,10 @@ const Account = () => {
                 name="last_name"
                 autoComplete="lname"
                 defaultValue={lastName}
+                onChange={e => setLastName(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                defaultValue={username}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
@@ -270,6 +254,7 @@ const Account = () => {
                 id="email"
                 autoComplete="email"
                 defaultValue={email}
+                onChange={e => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -283,6 +268,7 @@ const Account = () => {
                 id="profileImage"
                 autoComplete="profile image"
                 defaultValue={profileImg}
+                onChange={e => setprofileImg(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>

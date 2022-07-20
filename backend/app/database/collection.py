@@ -24,6 +24,7 @@ user_collection = establish_or_get("user", db, ["username"])
 project_collection = establish_or_get("project", db, ["project_name"])
 cohort_collection = establish_or_get("cohort", db)
 university_collection = establish_or_get("university", db)
+funds_collection = establish_or_get("funds", db)
 
 if db.has_graph("hub_graph"):
     hub_graph = db.graph("hub_graph")
@@ -54,11 +55,21 @@ else:
 if not hub_graph.has_edge_definition("isFunding"):
     isFunding_edge = hub_graph.create_edge_definition(
         edge_collection="isFunding",
-        from_vertex_collections=["user"],
+        from_vertex_collections=["funds"],
         to_vertex_collections=['project']
     )
 else:
     isFunding_edge = hub_graph.edge_collection("isFunding")
+
+if not hub_graph.has_edge_definition("appliedFunding"):
+    appliedFunding_edge = hub_graph.create_edge_definition(
+        edge_collection="appliedFunding",
+        from_vertex_collections=["user"],
+        to_vertex_collections=['funds']
+    )
+else:
+    appliedFunding_edge = hub_graph.edge_collection("appliedFunding")
+
 
 # University sponsors
 if not hub_graph.has_edge_definition("sponsoredBy"):

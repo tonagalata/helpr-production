@@ -59,7 +59,7 @@ function App() {
         window.location.reload();
       }    
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (projects === null){
@@ -87,7 +87,7 @@ if(!token) {
             }
             {
               <Route 
-                    path="/all-projects">
+                    eaxct path="/all-projects">
                   <Sidebar
                     faIcons={faIcons} 
                     pagesList={['all-projects']}
@@ -122,7 +122,7 @@ return (
           <Switch>
             
             <div>
-              <Redirect from="/signup" to="all-projects" />
+              {/* <Redirect from="/signup" to="all-projects" /> */}
               <Sidebar
                   faIcons={faIcons} 
                   pagesList={pagesList}

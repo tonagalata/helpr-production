@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import TinyMceEditor from "../TinyMCEditor/TinyMCEditor";
 import classes from './CreateProject.module.css'
 import useToken from '../useToken';
 import useUser from "../useUser";
@@ -44,7 +45,7 @@ export default function CreateProject(props) {
             fetch(url, {
               method: 'POST',
               headers: new Headers({
-                'Authorization': `Bearer ${token.access_token}`,      
+                'Authorization': `Bearer ${token}`,      
                 'Accept': 'application/json',
                 'Content-Type':'application/json'  
               }),
@@ -156,6 +157,10 @@ export default function CreateProject(props) {
                 onChange={e => setDescription(e.target.value)}
                 placeholder="Describe your project..."
               />
+              {/* <TinyMceEditor 
+                onChange={e => setDescription(e.target.value)}
+              /> */}
+
             </Grid>
           </Grid>
           <Button

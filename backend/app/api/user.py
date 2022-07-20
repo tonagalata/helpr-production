@@ -109,7 +109,7 @@ async def user_signup(user: User = Body(default=None), password: str = None):
     return doc
 
 @router.put("/update/info", tags=['User'])
-async def update_user(user: UserUpdate, apiKey: dict=Depends(get_current_user)):
+async def update_user(user: UserUpdate):
     update = user.dict()
 
     update.pop("password", None)
@@ -135,7 +135,7 @@ async def update_user(user: UserUpdate, apiKey: dict=Depends(get_current_user)):
     return new_user
 
 @router.put("/funds/add", tags=['User'])
-async def add_funds_to_user(body: UserFunding, apiKey: dict=Depends(get_current_user)):
+async def add_funds_to_user(body: UserFunding):
     user = get_user(user_collection, body.username, doc_return=True)
 
     if user is None:
@@ -151,7 +151,7 @@ async def add_funds_to_user(body: UserFunding, apiKey: dict=Depends(get_current_
     return new_user
 
 @router.put("/update/password", tags=['User'])
-async def update_user_pass(username: str, password: str, apiKey: dict=Depends(get_current_user)):
+async def update_user_pass(username: str, password: str):
     
     user = get_user(user_collection, username)
 
