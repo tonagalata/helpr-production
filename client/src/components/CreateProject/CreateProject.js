@@ -45,7 +45,7 @@ export default function CreateProject(props) {
             fetch(url, {
               method: 'POST',
               headers: new Headers({
-                'Authorization': `Bearer ${token.access_token}`,      
+                'Authorization': `Bearer ${token}`,      
                 'Accept': 'application/json',
                 'Content-Type':'application/json'  
               }),
@@ -144,7 +144,7 @@ export default function CreateProject(props) {
               />
             </Grid>
             <Grid item xs={12}>
-              {/* <TextareaAutosize
+              <TextareaAutosize
                 variant="outlined"
                 required
                 style={{width: '100%', height: 200}}
@@ -156,10 +156,10 @@ export default function CreateProject(props) {
                 // inputRef={description}
                 onChange={e => setDescription(e.target.value)}
                 placeholder="Describe your project..."
-              /> */}
-              <TinyMceEditor 
-                onChange={e => setDescription(e.target.value)}
               />
+              {/* <TinyMceEditor 
+                onChange={e => setDescription(e.target.value)}
+              /> */}
 
             </Grid>
           </Grid>

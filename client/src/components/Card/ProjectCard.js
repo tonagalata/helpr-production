@@ -62,7 +62,7 @@ export default function ProjectCard(props) {
         fetch(url, {
           method: 'PUT',
           headers: new Headers({
-            'Authorization': `Bearer ${token.access_token}`,      
+            'Authorization': `Bearer ${token}`,      
             'Accept': 'application/json',
             'Content-Type':'application/json'  
           }),
@@ -167,7 +167,7 @@ export default function ProjectCard(props) {
       <CardActions disableSpacing>
         {
         props.project.funds &&
-        `$${props.project.funds.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        `$ ${props.project.funds.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
         }
         <ExpandMore
           expand={expanded}
@@ -181,10 +181,10 @@ export default function ProjectCard(props) {
       </CardActions>
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between'}}>
           <Box aria-label="fund">
-            <TextField inputRef={money} id="outlined-basic" label="Fund Project" variant="outlined" />
+            <TextField inputRef={money} id="outlined-basic" label="Fund Project" variant="outlined" disabled/>
           </Box>
           <Box aria-label="fund-btn">
-            <Button sx={{ height: '4em' }} onClick={handleProjFundUpdate} variant="contained" color="success">Fund</Button>
+            <Button sx={{ height: '4em' }} onClick={handleProjFundUpdate} variant="contained" color="success" disabled>Fund</Button>
           </Box>
         </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>

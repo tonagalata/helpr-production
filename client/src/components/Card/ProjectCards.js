@@ -78,7 +78,7 @@ export default function ProjectCards(props) {
       "role": "Member"
     }
 
-    const url = `http://localhost:8000/project/members/add`
+    const url = `http://172.16.231.100:8000/project/members/add`
   
         fetch(url, {
           method: 'POST',

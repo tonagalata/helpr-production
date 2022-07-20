@@ -3,7 +3,6 @@ import { Editor } from "@tinymce/tinymce-react";
 const TinyMceEditor = () => {
   return (
     <Editor
-      initialValue="<p>This is the initial content of the editor.</p>"
       init={{
         height: 500,
         menubar: false,

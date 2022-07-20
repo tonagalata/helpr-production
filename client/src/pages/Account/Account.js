@@ -21,6 +21,7 @@ import Container from "@mui/material/Container";
 import classes from './Account.module.css'
 import useToken from "../../components/useToken";
 import useUser from "../../components/useUser";
+import LoadingImg from "../../images/loading.gif"
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -42,11 +43,11 @@ const Account = () => {
 
   const [userStatus, setUserStatus] = useState();
   const [password, setpassword] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [email, setEmail] = useState();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState();
-  const [profileImg, setprofileImg] = useState("https://source.unsplash.com/random)");
+  const [profileImg, setprofileImg] = useState("https://source.unsplash.com/random");
 
     useEffect(() => {
     if (user){
@@ -71,7 +72,7 @@ const Account = () => {
         }
       })
     }
-  },[]);
+  },[user]);
 
   const handleUpdateUserInfo =  () => {
     handleGetUser();
@@ -91,16 +92,12 @@ const Account = () => {
         fetch(url, {
           method: 'PUT',
           headers: new Headers({
-            'Authorization': `Bearer ${token.access_token}`,      
+            'Authorization': `Bearer ${token}`,      
             'Accept': 'application/json',
             'Content-Type':'application/json'  
           }),
           body: JSON.stringify(params)
         })
-        // .then(res => res.json())
-        // .then(data => {
-        //   console.log(data)
-        // })
   }
   const handleUpdatePassword =  () => {
   
@@ -200,8 +197,10 @@ const Account = () => {
     //       .then(res => res.json())
     // }
 
-    if(!(firstName && lastName && email && username)) {
-      return <span style={{ margin: '0 auto', fontSize: '100px', textAlign: 'center' }}>Loading...</span>
+    if(!(firstName && lastName && email && username && user)) {
+      return <span style={{ margin: '0 auto', fontSize: '100px', textAlign: 'center', display: "flex", justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <img src={LoadingImg} alt="loading image" />
+      </span>
     }
 
 
