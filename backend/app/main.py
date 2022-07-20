@@ -15,10 +15,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://172.16.231.98:8080", 
+    allow_origins=[ 
         "http://localhost:3000", 
-        "http://172.16.231.98:3000"
+        "http://172.16.231.98:3000",
+        "https://projects.greenknightdata.net",
+        "http://projects.greenknightdata.net:3000",
+        "http://137.184.215.70:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],

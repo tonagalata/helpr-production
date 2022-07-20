@@ -1,9 +1,18 @@
 server {
-    listen 80 default_server;
+    listen 80;
 
     server_name api.greenknightdata.net;
 
     location / {
-        proxy_pass "http://172.16.231.100:8000/";
+        proxy_pass "http://localhost:8000/";
+    }
+}
+server {
+    listen 80 default_server;
+
+    server_name projects.greenknightdata.net;
+
+    location / {
+        proxy_pass "http://localhost:3000/";
     }
 }
