@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Body, status, requests
-from app.database.models.user import User, UserUpdate
+from app.database.models.user import User, UserFunding, UserUpdate
 from app.auth.pass_validation import get_user, hash_password
 from app.auth.jwt_handler import get_current_user
 from app.core.validation import check_unique
@@ -109,7 +109,7 @@ async def user_signup(user: User = Body(default=None), password: str = None):
     return doc
 
 @router.put("/update/info", tags=['User'])
-async def update_user(user: UserUpdate, apiKey: dict=Depends(get_current_user)):
+async def update_user(user: UserUpdate):
     update = user.dict()
 
     update.pop("password", None)
@@ -121,19 +121,37 @@ async def update_user(user: UserUpdate, apiKey: dict=Depends(get_current_user)):
             detail=f"User with username '{update['username']}' does not exist."
         )
 
-    pop_list = ['utc_date_created']
+    pop_list = ['utc_date_created', 'available_funds']
     for key in update.keys():
         if update[key] is None:
             pop_list.append(key)
     
     [update.pop(d, None) for d in pop_list]
 
-    new_user = user_collection.udpate(update, keep_none=False, return_new=True)
+    update['_key'] = update['username']
+    
+    new_user = user_collection.update(update, keep_none=False, return_new=True)
+
+    return new_user
+
+@router.put("/funds/add", tags=['User'])
+async def add_funds_to_user(body: UserFunding):
+    user = get_user(user_collection, body.username, doc_return=True)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User '{body.username}' not found."
+        )
+    
+    user['available_funds'] = user.get('available_funds', 0) + body.additional_funds
+    
+    new_user = user_collection.update(user, keep_none=False, return_new=True)
 
     return new_user
 
 @router.put("/update/password", tags=['User'])
-async def update_user_pass(username: str, password: str, apiKey: dict=Depends(get_current_user)):
+async def update_user_pass(username: str, password: str):
     
     user = get_user(user_collection, username)
 

@@ -12,7 +12,7 @@ services:
       - ARANGO_URL=172.16.231.99
       - ARANGO_USER=${ARANGO_USER}
     volumes:
-      - ./backend/:/app/
+      - ./backend:/app/
     networks:
       backend:
         ipv4_address: 172.16.231.100
@@ -21,6 +21,22 @@ services:
     restart: on-failure
     depends_on:
       - arango_db
+
+  frontend:
+    build: ./client
+    command: npm run start
+    env_file:
+      - ./.env
+    volumes:
+      - frontend:/app/
+    networks:
+      backend:
+        ipv4_address: 172.16.231.98
+    ports:
+      - 3000:3000
+    restart: on-failure
+    depends_on:
+      - backend
   
   arango_db:
     image: arangodb:latest
@@ -55,3 +71,4 @@ networks:
 
 volumes:
   arango:
+  frontend:

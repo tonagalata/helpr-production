@@ -17,8 +17,16 @@ class ProjectUpdate(Project):
     utc_date_created: Optional[datetime.datetime]
     hearts: Optional[int]
     funds: Optional[float]
+    project_name: Optional[str]
 
 class ProjectMember(BaseModel):
     project_key: str
     username: List[str]
     role: Optional[str] = "Member"
+
+class ProjectFund(BaseModel):
+    project_key: str
+    username: str
+    funding_amount: str
+    transaction_datetime: datetime.datetime = datetime.datetime.utcnow()
+ 

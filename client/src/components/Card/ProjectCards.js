@@ -31,100 +31,69 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function ProjectCard(props) {
+export default function ProjectCards(props) {
 
-    const { user } = useUser();
-    const { token } = useToken();
+  const { user } = useUser();
+  const { token } = useToken();
 
-    const [expanded, setExpanded] = useState(false);
-    const [expandedSetting, setExpandedSetting] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+  const [expandedSetting, setExpandedSetting] = useState(false);
+  const [favorite, setFavorite] = useState(false);
+  const [fund, setFund] = useState(0);
 
-    const money = useRef("")
+  const money = useRef("")
 
-    const handleProjFundUpdate = (e) => {
-      // if(money){
-      // console.log(e.target, parseInt(money.current.value))
-      // }
-      if (money){
-        const url = `http://localhost:8000/project/update/${props.project._key}`
-        console.log(url)
-        const reqBody = {
-          // "project_name": props.project.project_name,
-          // "github_repo": "string",
-          // "description": "string",
-          // "short_desc": "string",
-          // "utc_date_created": "2022-07-06T01:53:51.008Z",
-          // "icon_path": "string",
-          // "stars": 2,
-          "funds": parseInt(money.current.value) + parseInt(props.project.funds)
-        }
+
+  const handleFavorite = () => {
+
+    setFavorite(!favorite);
+  };
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleExpandSetting = (e) => {
+   const pro_key = e.target.offsetParent.parentElement.id
+   handleAddMember(pro_key, user)
+
+    setExpandedSetting(!expandedSetting);
+  };
+
+  const handleFund = () => {
+      if(money){
+          setFund(fund + parseInt(money.current.value))
+      }
+  };
+
+  const handleAddMember = (project_key, user) => {
+
+    console.log(project_key, user, token, "<-------------- Add Member")
+
+    const member_info = {
+      "project_key": project_key,
+      "username": [
+        user
+      ],
+      "role": "Member"
+    }
+
+    const url = `http://172.16.231.100:8000/project/members/add`
   
         fetch(url, {
-          method: 'PUT',
+          method: 'POST',
           headers: new Headers({
-            'Authorization': `Bearer ${token}`,      
+            'Authorization': `Bearer ${token.access_token}`,      
             'Accept': 'application/json',
             'Content-Type':'application/json'  
           }),
-          body: JSON.stringify(reqBody)
+          body: JSON.stringify(member_info)
         })
         .then(res => res.json())
-        .then(data => {
-          props.setFund(data.funds)
-        })
-      }
-    }
-
-    // const handleFavorite = () => {
-
-    //   props.setFavorite(!props.favorite);
-    // };
-
-    const handleExpandClick = () => {
-      setExpanded(!expanded);
-    };
-
-    const handleExpandSetting = (e) => {
-    const pro_key = e.target.offsetParent.parentElement.id
-    handleAddMember(pro_key, user)
-
-      setExpandedSetting(!expandedSetting);
-    };
-
-    const handleFund = () => {
-        if(money){
-            props.setFund(props.fund + parseInt(money.current.value))
-        }
-    };
-
-    const handleAddMember = (project_key, user) => {
-
-      console.log(project_key, user, token, "<-------------- Add Member")
-
-      const member_info = {
-        "project_key": project_key,
-        "username": [
-          user
-        ],
-        "role": "Member"
-      }
-
-      const url = `http://localhost:8000/project/members/add`
-    
-          fetch(url, {
-            method: 'POST',
-            headers: new Headers({
-              'Authorization': `Bearer ${token.access_token}`,      
-              'Accept': 'application/json',
-              'Content-Type':'application/json'  
-            }),
-            body: JSON.stringify(member_info)
-          })
-          .then(res => res.json())
-    }
+  }
 
   return (
-    <Card sx={{ maxWidth: 345 }} id={props.project._key}>
+    <Card sx={{ maxWidth: 345, cursor: 'pointer' }} id={props.project._key}>
         {
         (expandedSetting && (token && user)) &&
         <>
@@ -165,28 +134,28 @@ export default function ProjectCard(props) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {
-        props.project.funds &&
-        `$ ${props.project.funds.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
-        }
+        <IconButton aria-label="add to favorites" onClick={handleFavorite}>
+          <FavoriteIcon sx={{ color: favorite ? '#ff0000' : '' }} />
+        </IconButton>
+        ${fund.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
         >
-          <ExpandMoreIcon />
+          {/* <ExpandMoreIcon /> */}
           
         </ExpandMore>
       </CardActions>
-        <CardActions sx={{ display: 'flex', justifyContent: 'space-between'}}>
+        {/* <CardActions sx={{ display: 'flex', justifyContent: 'space-between'}}>
           <Box aria-label="fund">
-            <TextField inputRef={money} id="outlined-basic" label="Fund Project" variant="outlined" disabled/>
+            <TextField inputRef={money} id="outlined-basic" label="Fund Project" variant="outlined" />
           </Box>
           <Box aria-label="fund-btn">
-            <Button sx={{ height: '4em' }} onClick={handleProjFundUpdate} variant="contained" color="success" disabled>Fund</Button>
+            <Button onClick={handleFund} sx={{ height: '4em' }} variant="contained" color="success">Fund</Button>
           </Box>
-        </CardActions>
+        </CardActions> */}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>Description:</Typography>

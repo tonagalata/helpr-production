@@ -4,7 +4,7 @@ import styles from './Transactions.module.css'
 const Transactions = () => {
   return (
     <div className={styles.mainDiv}>
-      <h1>Welcome to Transactions page</h1>
+      <h1>Coming Soon...</h1>
     </div>
   );
 };

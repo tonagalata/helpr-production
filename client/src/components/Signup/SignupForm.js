@@ -67,7 +67,7 @@ export default function SignUpForm(props) {
         const userNameVal = userName.current.value
         const emailVal = email.current.value
         const passwordVal = password.current.value
-        const imagePathVal = imagePath
+        const imagePathVal = imagePath.current.value
         const disableVal = false
 
         const createUser = {
