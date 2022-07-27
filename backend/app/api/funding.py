@@ -55,8 +55,9 @@ async def fund_project(body: FundingRequest):
     update_project_funds(project, funds=body.funding_amount)
 
     # Create funding Node
-    new_fund_node = funds_collection.insert(fund_node, return_new=True)
-    
+    new_fund_node = funds_collection.insert(fund_node, return_new=True)['new']
+    print(new_fund_node)
+
     response_body['funding_node'] = new_fund_node.copy()
 
     project_edge = {
@@ -74,8 +75,12 @@ async def fund_project(body: FundingRequest):
 
     return response_body
 
+@router.get('/get-all', tags=['Funding'])
+def get_all_funds():
+    return [x for x in funds_collection.all()]
+
 def update_project_funds(project: dict, funds: float=0):
-    project['funds'] = project.get('funds',0) + funds
+    project['funds'] = project.get('funds', 0) + funds
     project_collection.update(project, silent=True)
     return None
 

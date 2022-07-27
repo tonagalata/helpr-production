@@ -8,7 +8,7 @@ from typing import Union
 from pydantic import EmailStr
 
 from app.database.collection import (
-    hub_graph
+    hub_graph, db
 )
 
 user_collection = hub_graph.vertex_collection("user")
@@ -64,6 +64,27 @@ async def search_users(
         all_users = [doc for doc in results]
 
     return {"user_count": result_count, "users": all_users}
+
+# Get projects for user
+@router.get('/{username}/projects', tags=['User'])
+async def user_projects(username: str):
+    user = get_user(user_collection, username)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with username {} does not exist.".format(username)
+        )
+    
+    aql = f"""
+    FOR v, e in 1..1 OUTBOUND 'user/{username}' memberOf
+    FILTER CONTAINS(v._id, 'project/')
+    RETURN v 
+    """
+    
+    results = db.aql.execute(aql, batch_size=100)
+
+    return [x for x in results]
 
 # Create new user
 @router.post("/signup", tags=['User'])
