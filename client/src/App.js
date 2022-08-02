@@ -1,171 +1,59 @@
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import useUser from "./components/useUser";
 
-import React, {useState, useEffect, useRef} from 'react';
-import './App.css';
-import Sidebar from './components/Sidebar/Sidebar';
-import { Redirect, Route, Router, Switch } from "wouter";
-import Home from './pages/Home/Home';
-import AllProjects from './pages/AllProjects/AllProjects';
-import SelectedProject from './pages/AllProjects/SelectedProjects';
-import MyProjects from './pages/MyProjects/MyProjects';
-import Transactions from './pages/Transactions/Transactions';
-import Account from './pages/Account/Account';
-import wine_p from './images/wine_project.jpeg'
-import beer_p from './images/beer_project.jpeg'
-import tornado_p from './images/tornado_project.jpeg'
-import crime_p from './images/crime_project.jpeg'
-import movie_p from './images/movie_project.jpeg'
-import covid_p from './images/covid_project.jpeg'
-import SignUpForm from './components/Signup/SignupForm';
-import SignInForm from './components/Signin/SigninForm';
-import useToken from './components/useToken';
-import useUser from './components/useUser';
-import CreateProject from './components/CreateProject/CreateProject';
+import routes from "./routes";
+import withTracker from "./withTracker";
 
-  
-function App() {
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./utils/shards-dashboard/styles/shards-dashboards.1.1.0.min.css";
 
-  const { token, setToken } = useToken();
-  const { user, setUser } = useUser();
+export default () => {
+  // basename={process.env.REACT_APP_BASENAME || ""}
+  const { user } = useUser();
 
-  const [favorite, setFavorite] = useState(false);
-  const [fund, setFund] = useState();
-  const [sidebar, setSidebar] = useState(false)
-  const [pathName, setPathName] = useState()
-  // const [currentUser, setCurrentUser] = useState(null)
-  const [projects, setProjects] = useState(null)
-
-  const pagesList = ['all projects', 'transactions', 'my projects', 'create project', 'account']
-  
-
-  const faIcons = ['fa fa-project-diagram', 'fa fa-history', 'fa fa-check-square', 'fa fa-plus', 'fa fa-user']
-
-  useEffect(() => {
-    if (pathName){
-      setPathName(['/signin', '/signup'].includes(window.location.pathname))
-      window.location.reload();
-    }
-  },[pathName]);
-
-
-  useEffect(() => {
-    if (token){
-      const currentDate = new Date();
-      const sessionDate = new Date(JSON.parse(sessionStorage.getItem('session_date')));
-
-      if(currentDate > sessionDate){
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('session_date');
-        window.location.reload();
-      }    
-    }
-  }, []);
-
-  useEffect(() => {
-    if (projects === null){
-      fetch("http://localhost:8000/project/all")
-      .then(response => response.json())
-      .then(data => setProjects(data))
-    }
-  },[projects]);
-
-  const handleSidebar = (e) => {
-    setSidebar(false)
-};
-
-
-if(!token) {
-  
   return (
+  <Router> 
+    {
+
+    user ?
     <div>
-
-          <Router>
-            {
-            !['/all-projects', '/signin', '/signup'].includes(window.location.pathname) ?
-              <Redirect from="*" to="/signin" />
-              : ""
-            }
-            {
-              <Route 
-                    eaxct path="/all-projects">
-                  <Sidebar
-                    faIcons={faIcons} 
-                    pagesList={['all-projects']}
-                    // user={currentUser} 
-                    handleSidebar={handleSidebar} 
-                    sidebar={sidebar} 
-                    setSidebar={setSidebar} 
-                  /> 
-                    <AllProjects 
-                      projects={projects}
-                    />
-              </Route>
-            }
-
-            <Route path="/signin">
-            <SignInForm
-              setToken={setToken}
-              setUser={setUser}
-              />
-          </Route> 
-          <Route path="/signup">
-            <SignUpForm />
-          </Route>
-        </Router>
+      {routes.map((route, index) => {
+        return (
+          <Route
+            key={index}
+            path={route.path}
+            exact={route.exact}
+            component={withTracker(props => {
+              return (
+                <route.layout {...props}>
+                  <route.component {...props} />
+                </route.layout>
+              );
+            })}
+          />
+        );
+      })}
     </div>
-  )}
-
-
-return (
-    <div className="App">
-      <Router>
-          <Switch>
-            
-            <div>
-              {/* <Redirect from="/signup" to="all-projects" /> */}
-              <Sidebar
-                  faIcons={faIcons} 
-                  pagesList={pagesList}
-                  // user={currentUser} 
-                  handleSidebar={handleSidebar} 
-                  sidebar={sidebar} 
-                  setSidebar={setSidebar} /> 
-              <Route exact path="/all-projects">
-                <AllProjects projects={projects}/>
-              </Route>
-
-              {
-                
-              }
-              <Route exact path="/all-projects/:key">
-                <SelectedProject 
-                  projects={projects}
-                  favorite={favorite}
-                  setFavorite={setFavorite}
-                  fund={fund}
-                  setFund={setFund}
-                />
-              </Route>
-
-              <Route exact path="/my-projects">
-                <MyProjects/>
-              </Route>
-
-              <Route exact path="/transactions">
-                <Transactions/>
-              </Route>
-              <Route exact path="/account">
-                <Account/>
-              </Route>
-              <Route exact path="/create-project">
-                <CreateProject />
-              </Route>
-              </div>
-          </Switch>
-      </Router>
-      
-    </div>
-);
-}
-  
-export default App;
+    :
+    <div>
+    {routes.filter(r => ["/project-overview", "/signin", "/signup", "/errors"].includes(r.path)).map((route, index) => {
+      return (
+        <Route
+          key={index}
+          path={route.path}
+          exact={route.exact}
+          component={withTracker(props => {
+            return (
+              <route.layout {...props}>
+                <route.component {...props} />
+              </route.layout>
+            );
+          })}
+        />
+      );
+    })}
+  </div>
+    }
+  </Router>
+)};
