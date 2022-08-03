@@ -31,7 +31,13 @@ export default [
     path: "/",
     exact: true,
     layout: DefaultLayout,
-    component: () => !user ? <Redirect to="/signin" /> : <Redirect to="/project-overview" />
+    component: Signin
+  },
+  {
+    path: "/signin",
+    exact: true,
+    layout: DefaultLayout,
+    component: () => user ? <Redirect to="/project-overview" /> : <Signin />
   },
   {
     path: "/project-overview/:project",
@@ -77,12 +83,6 @@ export default [
     exact: true,
     layout: DefaultLayout,
     component: MyProjects
-  },
-  {
-    path: "/signin",
-    exact: true,
-    layout: DefaultLayout,
-    component: () => user ? <Redirect to="/project-overview" /> : <Signin />
   },
   {
     path: "/signup",
