@@ -85,11 +85,17 @@ export default [
     component: MyProjects
   },
   {
+    path: "/signup/:choice",
+    layout: DefaultLayout,
+    component: SignUp
+  },
+  {
     path: "/signup",
     exact: true,
     layout: DefaultLayout,
     component: () => user ? <Redirect to="/project-overview" /> : <SignUp/>
   },
+
   // {
   //   path: "/errors",
   //   exact: true,

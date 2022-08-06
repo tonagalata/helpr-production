@@ -37,7 +37,7 @@ export default () => {
     </div>
     :
     <div>
-    {routes.filter(r => ["/project-overview", "/signin", "/signup", "/", "/errors"].includes(r.path)).map((route, index) => {
+    {routes.filter(r => ["/project-overview", "/signin", "/signup", "/", "/errors", "/signup/:choice"].includes(r.path)).map((route, index) => {
       return (
         <Route
           key={index}

@@ -11,6 +11,7 @@ import Container from "@mui/material/Container";
 import classes from './SignUpForm.module.css'
 import useToken from '../../components/useToken';
 import useUser from "../../components/useUser";
+import { MenuItem, Select } from "@mui/material";
 
 
 export default function SignUpForm(props) {
@@ -23,8 +24,35 @@ export default function SignUpForm(props) {
     const lastName = useRef("")
     const email = useRef("")
     const userName = useRef("")
+    const zipcode = useRef("")
     const imagePath = useRef("")
     const password = useRef("")
+    const userRoleSel = useRef("");
+
+    const handleChange = (event) => {
+      userRoleSel.current = event.target.value;
+      console.log(userRole[userRole.indexOf(props.match.params.choice.toUpperCase())], userRoleSel.current)
+    };
+
+    const userRole = ['RBT', 'CHILD', 'PARENT', 'ADMIN']
+
+
+    if(props.match){
+      console.log(userRole[userRole.indexOf(props.match.params.choice.toUpperCase())], userRoleSel.current)
+    //   // if (props.match.params.choice === 'rbt'){
+    //   //     // setuserRole(() => 'RBT');
+    //   //   console.log(props.match.params.choice)
+    //   // }
+    //   // if (props.match.params.choice === 'admin'){
+    //   //     setuserRole('ADMIN');
+    //   // }
+    //   // if (props.match.params.choice === 'child'){
+    //   //     setuserRole('CHILD');
+    //   // }
+    //   // if (props.match.params.choice === 'parent'){
+    //   //     setuserRole('PARENT');
+    //   // }
+    }
 
     const handleGetUser = async (username, password) => {
       
@@ -58,6 +86,8 @@ export default function SignUpForm(props) {
     const handleCreateUser = (e) => {
 
         e.preventDefault()
+
+        const userType = userRole[userRole.indexOf(props.match.params.choice.toUpperCase())]
         
         const firstNameVal = firstName.current.value
         const lastNameVal = lastName.current.value
@@ -65,14 +95,18 @@ export default function SignUpForm(props) {
         const emailVal = email.current.value
         const passwordVal = password.current.value
         const imagePathVal = imagePath.current.value
+        const zipcodeVal = zipcode.current.value
+        const roleVal = (!userRoleSel ? userRoleSel : userType) || "GUEST"
         const disableVal = false
 
         const createUser = {
             "first_name": firstNameVal,
             "last_name": lastNameVal,
             "username": userNameVal,
+            "zipcode": zipcodeVal,
             "email": emailVal,
             "disabled": disableVal,
+            "role": roleVal,
             "image_path": imagePathVal,
         }
 
@@ -141,7 +175,7 @@ export default function SignUpForm(props) {
                 inputRef={lastName}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 variant="outlined"
                 required
@@ -153,7 +187,19 @@ export default function SignUpForm(props) {
                 inputRef={email}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="zipcode"
+                label="Zipcode"
+                name="zipcode"
+                autoComplete="zipcode"
+                inputRef={zipcode}
+              />
+            </Grid>
+            <Grid item xs={`${ props.match ? 6 : 12}`}>
               <TextField
                 variant="outlined"
                 required
@@ -165,6 +211,38 @@ export default function SignUpForm(props) {
                 inputRef={userName}
               />
             </Grid>
+            {
+              props.match &&
+
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id={userRole[userRole.indexOf(props.match.params.choice.toUpperCase())]}
+                label="User Type"
+                name={"user_type"}
+                autoComplete={userRole[userRole.indexOf(props.match.params.choice.toUpperCase())]}
+                inputRef={userRoleSel}
+                defaultValue={userRole[userRole.indexOf(props.match.params.choice.toUpperCase())]}
+                disabled={true}
+              />
+              {/* <Select
+                variant="outlined"
+                required
+                fullWidth
+                label="User Type"
+                labelId="demo-simple-select-label"
+                inputRef={userRoleSel}
+                onChange={handleChange}
+              >
+                <MenuItem value="RBT">RBT</MenuItem>
+                <MenuItem value="CHILD">CHILD</MenuItem>
+                <MenuItem value="PARENT">PARENT</MenuItem>
+                <MenuItem value="GUEST">GUEST</MenuItem>
+              </Select> */}
+              </Grid>
+            }
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -205,6 +283,13 @@ export default function SignUpForm(props) {
             <Grid item>
               <Link href="/signin" variant="body2">
                 Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link href="/signup/rbt" variant="body2">
+                Are you an RBT? Sign Up Here
               </Link>
             </Grid>
           </Grid>

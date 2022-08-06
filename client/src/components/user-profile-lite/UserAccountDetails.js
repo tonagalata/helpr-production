@@ -23,7 +23,9 @@ const UserAccountDetails = ({ title }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [username, setUsername] = useState();
+  const [zipcode, setZipcode] = useState();
   const [userStatus, setUserStatus] = useState();
   const [profileImg, setprofileImg] = useState("https://source.unsplash.com/random");
 
@@ -33,6 +35,8 @@ const UserAccountDetails = ({ title }) => {
       .then(response => response.json())
       // .then(data => console.log(data.username))
       .then(data =>{
+        setRole(data.role)
+        setZipcode(data.zipcode)
         setFirstName(data.first_name);
         setLastName(data.last_name);
         setUsername(data.username);
@@ -52,6 +56,8 @@ const UserAccountDetails = ({ title }) => {
     }
   },[user]);
 
+  // DwWv4QERd3!8vv4
+
   // console.log(firstName, lastName, email, username, user, "<--------------- //")
 
   const handleUpdateUserInfo =  () => {
@@ -62,7 +68,9 @@ const UserAccountDetails = ({ title }) => {
       'first_name' : firstName,
       'last_name' : lastName,
       'email' : email,
-      'username' : user
+      'username' : user,
+      'role': role,
+      'zipcode' : zipcode
     }
   
     const url = `http://localhost:8000/user/update/info`
@@ -70,12 +78,13 @@ const UserAccountDetails = ({ title }) => {
         fetch(url, {
           method: 'PUT',
           headers: new Headers({
-            'Authorization': `Bearer ${token}`,      
+            // 'Authorization': `Bearer ${token}`,      
             'Accept': 'application/json',
             'Content-Type':'application/json'  
           }),
           body: JSON.stringify(params)
-        }).then(
+        })
+        .then(
           d =>
           window.location.reload()
         )
@@ -214,6 +223,25 @@ const UserAccountDetails = ({ title }) => {
                   />
                 </Col>
               </Row>
+              <FormGroup>
+                <label htmlFor="feRole">Zipcode</label>
+                <FormInput
+                  id="feZipcode"
+                  placeholder="Zipcode"
+                  value={zipcode}
+                  onChange={(e) => setZipcode(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <label htmlFor="feRole">User Type</label>
+                <FormInput
+                  id="feRole"
+                  placeholder="Role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  disabled={true}
+                />
+              </FormGroup>
               <FormGroup>
                 <label htmlFor="feAddress">Profile Image</label>
                 <FormInput

@@ -3,7 +3,6 @@ FROM python:3.9-bullseye
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
-COPY ./Procfile /app/Procfile
 
 RUN apt-get update \
     && apt-get install gcc -y \

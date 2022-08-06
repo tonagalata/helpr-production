@@ -1,11 +1,14 @@
+from enum import Enum
 from fastapi import APIRouter, Depends, HTTPException, Body, status, requests
-from app.database.models.user import User, UserFunding, UserUpdate
+from app.database.models.user import User, UserFunding, UserUpdate, RoleEnum
 from app.auth.pass_validation import get_user, hash_password
 from app.auth.jwt_handler import get_current_user
 from app.core.validation import check_unique
 
 from typing import Union
 from pydantic import EmailStr
+
+
 
 from app.database.collection import (
     hub_graph, db
@@ -42,8 +45,10 @@ async def get_one_user(username: str):
 async def search_users(
     first_name: Union[str, None] = None,
     last_name: Union[str, None] = None,
+    zipcode: Union[str, None] = None,
     username: Union[str, None] = None,
-    email: Union[EmailStr, None] = None
+    email: Union[EmailStr, None] = None,
+    role: Union[RoleEnum, None] = None
 ):
     
     search = {}
@@ -53,8 +58,12 @@ async def search_users(
         search['last_name'] = last_name.title().strip()
     if username:
         search['username'] = username.lower().replace(" ", "")
+    if zipcode:
+        search['zipcode'] = zipcode.lower().replace(" ", "")
     if email:
         search['email'] = email.lower().replace(" ", "")
+    if role:
+        search['role'] = role
 
     results = user_collection.find(search)
     result_count = results.count()
@@ -109,7 +118,8 @@ async def user_signup(user: User = Body(default=None), password: str = None):
     doc['first_name'] = user_d['first_name'].title()
     doc['last_name'] = user_d['last_name'].title()
     doc['username'] = user_d['username'].lower().replace(" ","")
-    
+    doc['zipcode'] = user_d['zipcode'].lower().replace(" ","")
+    doc['role'] = user_d['role']
     doc['image_path'] = user_d.get('image_path','')
     doc['disabled'] = False
 
@@ -132,8 +142,9 @@ async def user_signup(user: User = Body(default=None), password: str = None):
 @router.put("/update/info", tags=['User'])
 async def update_user(user: UserUpdate):
     update = user.dict()
-
+    # update['role'] = RoleEnum
     update.pop("password", None)
+    update.pop("role", None)
 
     user = get_user(user_collection, update['username'])
     if user is None:
